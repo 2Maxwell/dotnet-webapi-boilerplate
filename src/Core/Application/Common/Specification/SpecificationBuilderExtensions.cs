@@ -25,7 +25,7 @@ public static class SpecificationBuilderExtensions
 
         if (filter.PageNumber > 1)
         {
-            query.Skip((filter.PageNumber - 1) * filter.PageSize);
+            query = query.Skip((filter.PageNumber - 1) * filter.PageSize);
         }
 
         return query
@@ -64,7 +64,7 @@ public static class SpecificationBuilderExtensions
             {
                 // search all fields (only first level)
                 foreach (var property in typeof(T).GetProperties()
-                    .Where(prop => prop.GetGetMethod()?.IsVirtual is not true))
+                    .Where(prop => Type.GetTypeCode(Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType) != TypeCode.Object))
                 {
                     var paramExpr = Expression.Parameter(typeof(T));
                     var propertyExpr = Expression.Property(paramExpr, property);

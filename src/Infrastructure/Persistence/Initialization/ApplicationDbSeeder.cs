@@ -1,12 +1,11 @@
-﻿using FSH.WebApi.Infrastructure.Auth.Permissions;
-using FSH.WebApi.Infrastructure.Identity;
+﻿using FSH.WebApi.Infrastructure.Identity;
 using FSH.WebApi.Infrastructure.Multitenancy;
+using FSH.WebApi.Infrastructure.Persistence.Context;
 using FSH.WebApi.Shared.Authorization;
 using FSH.WebApi.Shared.Multitenancy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 
 namespace FSH.WebApi.Infrastructure.Persistence.Initialization;
 
@@ -27,52 +26,59 @@ internal class ApplicationDbSeeder
         _logger = logger;
     }
 
-    public async Task SeedDatabaseAsync(CancellationToken cancellationToken)
+    public async Task SeedDatabaseAsync(ApplicationDbContext dbContext, CancellationToken cancellationToken)
     {
-        await SeedRolesAsync();
+        await SeedRolesAsync(dbContext);
         await SeedAdminUserAsync();
         await _seederRunner.RunSeedersAsync(cancellationToken);
     }
 
-    private async Task SeedRolesAsync()
+    private async Task SeedRolesAsync(ApplicationDbContext dbContext)
     {
-        foreach (string roleName in RoleService.DefaultRoles)
+        foreach (string roleName in FSHRoles.DefaultRoles)
         {
             if (await _roleManager.Roles.SingleOrDefaultAsync(r => r.Name == roleName)
                 is not ApplicationRole role)
             {
                 // Create the role
-                role = new ApplicationRole(roleName, $"{roleName} Role for {_currentTenant.Id} Tenant");
                 _logger.LogInformation("Seeding {role} Role for '{tenantId}' Tenant.", roleName, _currentTenant.Id);
+                role = new ApplicationRole(roleName, $"{roleName} Role for {_currentTenant.Id} Tenant");
                 await _roleManager.CreateAsync(role);
             }
 
             // Assign permissions
             if (roleName == FSHRoles.Basic)
             {
-                await AssignPermissionsToRoleAsync(role, DefaultPermissions.Basic);
+                await AssignPermissionsToRoleAsync(dbContext, FSHPermissions.Basic, role);
             }
             else if (roleName == FSHRoles.Admin)
             {
-                await AssignPermissionsToRoleAsync(role, DefaultPermissions.Admin);
+                await AssignPermissionsToRoleAsync(dbContext, FSHPermissions.Admin, role);
 
                 if (_currentTenant.Id == MultitenancyConstants.Root.Id)
                 {
-                    await AssignPermissionsToRoleAsync(role, DefaultPermissions.Root);
+                    await AssignPermissionsToRoleAsync(dbContext, FSHPermissions.Root, role);
                 }
             }
         }
     }
 
-    private async Task AssignPermissionsToRoleAsync(ApplicationRole role, List<string> permissions)
+    private async Task AssignPermissionsToRoleAsync(ApplicationDbContext dbContext, IReadOnlyList<FSHPermission> permissions, ApplicationRole role)
     {
         var currentClaims = await _roleManager.GetClaimsAsync(role);
-        foreach (string permission in permissions)
+        foreach (var permission in permissions)
         {
-            if (!currentClaims.Any(a => a.Type == FSHClaims.Permission && a.Value == permission))
+            if (!currentClaims.Any(c => c.Type == FSHClaims.Permission && c.Value == permission.Name))
             {
-                _logger.LogInformation("Seeding {role} Permission '{permission}' for '{tenantId}' Tenant.", role.Name, permission, _currentTenant.Id);
-                await _roleManager.AddClaimAsync(role, new Claim(FSHClaims.Permission, permission));
+                _logger.LogInformation("Seeding {role} Permission '{permission}' for '{tenantId}' Tenant.", role.Name, permission.Name, _currentTenant.Id);
+                dbContext.RoleClaims.Add(new ApplicationRoleClaim
+                {
+                    RoleId = role.Id,
+                    ClaimType = FSHClaims.Permission,
+                    ClaimValue = permission.Name,
+                    CreatedBy = "ApplicationDbSeeder"
+                });
+                await dbContext.SaveChangesAsync();
             }
         }
     }
