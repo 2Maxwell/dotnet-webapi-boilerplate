@@ -33,6 +33,9 @@ public class CurrentUser : ICurrentUser, ICurrentUserInitializer
     public string? GetTenant() =>
         IsAuthenticated() ? _user?.GetTenant() : string.Empty;
 
+    public string? GetMandantId() =>
+        IsAuthenticated() ? _user?.GetMandantId() : "9999";
+
     public void SetCurrentUser(ClaimsPrincipal user)
     {
         if (_user != null)

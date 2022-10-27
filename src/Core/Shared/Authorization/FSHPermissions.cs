@@ -26,6 +26,7 @@ public static class FSHResource
     public const string RoleClaims = nameof(RoleClaims);
     public const string Products = nameof(Products);
     public const string Brands = nameof(Brands);
+    public const string Mandants = nameof(Mandants);
 }
 
 public static class FSHPermissions
@@ -64,7 +65,11 @@ public static class FSHPermissions
         new("View Tenants", FSHAction.View, FSHResource.Tenants, IsRoot: true),
         new("Create Tenants", FSHAction.Create, FSHResource.Tenants, IsRoot: true),
         new("Update Tenants", FSHAction.Update, FSHResource.Tenants, IsRoot: true),
-        new("Upgrade Tenant Subscription", FSHAction.UpgradeSubscription, FSHResource.Tenants, IsRoot: true)
+        new("Upgrade Tenant Subscription", FSHAction.UpgradeSubscription, FSHResource.Tenants, IsRoot: true),
+        new("View Mandants", FSHAction.View, FSHResource.Mandants, IsBasic: true),
+        new("Search Mandants", FSHAction.Search, FSHResource.Mandants, IsBasic: true),
+        new("Create Mandants", FSHAction.Create, FSHResource.Mandants),
+        new("Update Mandants", FSHAction.Update, FSHResource.Mandants)
     };
 
     public static IReadOnlyList<FSHPermission> All { get; } = new ReadOnlyCollection<FSHPermission>(_all);

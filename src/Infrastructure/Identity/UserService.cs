@@ -91,6 +91,13 @@ internal partial class UserService : IUserService
         return await _userManager.FindByNameAsync(name) is not null;
     }
 
+    //public async Task<string> GetMandantIdAsync(string id)
+    //{
+    //    EnsureValidTenant();
+    //    ApplicationUser user = await _userManager.FindByIdAsync(id);
+    //    return user.MandantId;
+    //}
+
     public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null)
     {
         EnsureValidTenant();

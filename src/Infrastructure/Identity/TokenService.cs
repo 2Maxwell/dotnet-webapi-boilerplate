@@ -118,7 +118,8 @@ internal class TokenService : ITokenService
             new(FSHClaims.IpAddress, ipAddress),
             new(FSHClaims.Tenant, _currentTenant!.Id),
             new(FSHClaims.ImageUrl, user.ImageUrl ?? string.Empty),
-            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
+            new(FSHClaims.MandantId, user.MandantId.ToString()),
         };
 
     private string GenerateRefreshToken()

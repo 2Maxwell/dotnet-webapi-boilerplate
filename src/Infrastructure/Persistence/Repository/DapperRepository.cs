@@ -42,4 +42,22 @@ public class DapperRepository : IDapperRepository
 
         return _dbContext.Connection.QuerySingleAsync<T>(sql, param, transaction);
     }
+
+    public Task<T> QueryExecuteScalarAsync<T>(string sql, CancellationToken cancellationToken = default)
+    where T : IConvertible
+    {
+        //if (!_dbContext.Model.GetMultiTenantEntityTypes().Any(t => t.ClrType == typeof(T)))
+        //{
+        //    sql = sql.Replace("@tenant", _dbContext.TenantInfo.Id);
+        //}
+
+        return _dbContext.Connection.ExecuteScalarAsync<T>(sql);
+    }
+
+    public Task<int> ExecuteAsync<T>(string sql, CancellationToken cancellationToken = default)
+    where T : IConvertible
+    {
+        return _dbContext.Connection.ExecuteAsync(sql);
+    }
+
 }

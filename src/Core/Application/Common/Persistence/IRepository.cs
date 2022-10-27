@@ -9,6 +9,8 @@
 public interface IRepository<T> : IRepositoryBase<T>
     where T : class, IAggregateRoot
 {
+    // Task AddAsync(object period, CancellationToken cancellationToken);
+    // Task<int> CountAsync(Func<object, bool> p);
 }
 
 /// <summary>
@@ -17,6 +19,7 @@ public interface IRepository<T> : IRepositoryBase<T>
 public interface IReadRepository<T> : IReadRepositoryBase<T>
     where T : class, IAggregateRoot
 {
+    // Task<int> CountAsync(Func<object, object> p);
 }
 
 /// <summary>

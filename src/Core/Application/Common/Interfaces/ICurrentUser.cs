@@ -16,5 +16,7 @@ public interface ICurrentUser
 
     bool IsInRole(string role);
 
+    string? GetMandantId();
+
     IEnumerable<Claim>? GetUserClaims();
 }

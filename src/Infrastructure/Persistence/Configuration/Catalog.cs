@@ -1,4 +1,5 @@
 ﻿using Finbuckle.MultiTenant.EntityFrameworkCore;
+using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Catalog;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,6 +15,7 @@ public class BrandConfig : IEntityTypeConfiguration<Brand>
         builder
             .Property(b => b.Name)
                 .HasMaxLength(256);
+
     }
 }
 
@@ -30,5 +32,18 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
         builder
             .Property(p => p.ImagePath)
                 .HasMaxLength(2048);
+    }
+}
+
+public class PluGroupConfig : IEntityTypeConfiguration<PluGroup>
+{
+    public void Configure(EntityTypeBuilder<PluGroup> builder)
+    {
+        builder.IsMultiTenant();
+
+        builder
+            .Property(b => b.Name)
+                .HasMaxLength(30);
+
     }
 }
