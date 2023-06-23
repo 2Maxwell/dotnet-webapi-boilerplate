@@ -1,12 +1,5 @@
-﻿using FluentValidation;
-using FSH.WebApi.Application.Hotel.Categorys;
-using FSH.WebApi.Domain.Common.Events;
+﻿using FSH.WebApi.Domain.Common.Events;
 using FSH.WebApi.Domain.Hotel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.Hotel.Rooms;
 

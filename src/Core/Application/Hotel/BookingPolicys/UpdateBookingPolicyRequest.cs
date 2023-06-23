@@ -10,13 +10,16 @@ public class UpdateBookingPolicyRequest : IRequest<int>
     public string? Name { get; set; }
     public string? Kz { get; set; }
     public string? Description { get; set; }
-    public string? DisplayShort { get; set; }
     public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
     public string? ConfirmationText { get; set; }
     public bool IsDefault { get; set; }
     public bool CreditCard { get; set; }
     public bool Deposit { get; set; }
     public int Priority { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
 }
 
 public class UpdateBookingPolicyRequestValidator : CustomValidator<UpdateBookingPolicyRequest>
@@ -39,20 +42,20 @@ public class UpdateBookingPolicyRequestValidator : CustomValidator<UpdateBooking
             is not BookingPolicy existingBookingPolicy || existingBookingPolicy.MandantId == bookingPolicy.MandantId)
             .WithMessage((_, kz) => string.Format(localizer["bookingPolicyKz.alreadyexists"], kz));
 
-        // RuleFor(x => x.IsDefault)
-        //    .MustAsync(async (bookingPolicy, isDefault, ct) =>
-        //    await repository.GetBySpecAsync(new BookingPolicyByDefaultSpec(isDefault, bookingPolicy.MandantId), ct)
-        //    is null)
-        //    .WithMessage((_, isDefault) => string.Format(localizer["bookingPolicyDefaultPolicy.alreadyexists"], isDefault.ToString()));
-
         RuleFor(x => x.Description)
             .MaximumLength(200);
-        RuleFor(x => x.DisplayShort)
-            .MaximumLength(150);
         RuleFor(x => x.Display)
             .MaximumLength(500);
+        RuleFor(x => x.DisplayShort)
+            .MaximumLength(300);
+        RuleFor(x => x.DisplayHighLight)
+            .MaximumLength(300);
         RuleFor(x => x.ConfirmationText)
             .MaximumLength(500);
+        RuleFor(x => x.ChipIcon)
+            .MaximumLength(100);
+        RuleFor(x => x.ChipText)
+            .MaximumLength(50);
     }
 }
 
@@ -72,13 +75,16 @@ public class UpdateBookingPolicyRequestHandler : IRequestHandler<UpdateBookingPo
             request.Name,
             request.Kz,
             request.Description,
-            request.DisplayShort,
             request.Display,
+            request.DisplayShort,
+            request.DisplayHighLight,
             request.ConfirmationText,
             request.IsDefault,
             request.CreditCard,
             request.Deposit,
-            request.Priority
+            request.Priority,
+            request.ChipIcon,
+            request.ChipText
             );
 
         bookingPolicy.DomainEvents.Add(EntityUpdatedEvent.WithEntity(bookingPolicy));

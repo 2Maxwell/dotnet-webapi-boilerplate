@@ -13,10 +13,13 @@ public class CategoryShopMandantDto : IDto
     public string? Kz { get; set; }
     public string? Name { get; set; }
     public int OrderNumber { get; set; }
-    public string? DisplayDescriptionShort { get; set; }
-    public string? DisplayHightlights { get; set; }
+    public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
     public int NumberOfBeds { get; set; }
     public int NumberOfExtraBeds { get; set; }
+    public string? ImagePath { get; set; }
+    public int RoomsAvailable { get; set; }
     public List<RateShopMandantDto>? RatesList { get; set; } = new();
     public List<PriceCatDto>? PriceCatDtos { get; set; } = new(); 
 }

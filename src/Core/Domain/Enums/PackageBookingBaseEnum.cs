@@ -6,7 +6,7 @@ public enum PackageBookingBaseEnum
     perAdult = 200,
     perChild = 300,
     perChildAge5_15 = 310,
-    perPerson = 400,
+    perPax = 400,
     perBreakfast = 500,
     perNumber = 600
 }

@@ -11,14 +11,19 @@ public class CreatePackageRequest : IRequest<int>
     public string? Kz { get; set; }
     public string? Description { get; set; }
     public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
+    public string? ConfirmationText { get; set; }
     public int InvoicePosition { get; set; } = 1;
     public string? InvoiceName { get; set; }
     public int PackageBookingBaseEnumId { get; set; }
     public int PackageBookingRhythmEnumId { get; set; }
+    public string? PackageTargetEnum { get; set; }
     public bool Optional { get; set; }
     public bool ShopExtern { get; set; }
-    public List<PackageItemDto>? PackageItems { get; set; }
-
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
+    public List<PackageItemDto>? PackageItems { get; set; } = new();
 }
 
 public class CreatePackageRequestValidator : CustomValidator<CreatePackageRequest>
@@ -40,7 +45,17 @@ public class CreatePackageRequestValidator : CustomValidator<CreatePackageReques
         RuleFor(x => x.Description)
         .MaximumLength(200);
         RuleFor(x => x.Display)
-        .MaximumLength(50);
+            .MaximumLength(500);
+        RuleFor(x => x.DisplayShort)
+            .MaximumLength(300);
+        RuleFor(x => x.DisplayHighLight)
+            .MaximumLength(300);
+        RuleFor(x => x.ConfirmationText)
+            .MaximumLength(500);
+        RuleFor(x => x.ChipIcon)
+            .MaximumLength(100);
+        RuleFor(x => x.ChipText)
+            .MaximumLength(50);
     }
 }
 
@@ -80,12 +95,19 @@ public class CreatePackageRequestHandler : IRequestHandler<CreatePackageRequest,
             request.Kz,
             request.Description,
             request.Display,
+            request.DisplayShort,
+            request.DisplayHighLight,
+            request.ConfirmationText,
             request.InvoicePosition,
             request.InvoiceName,
             request.PackageBookingBaseEnumId,
             request.PackageBookingRhythmEnumId,
+            request.PackageTargetEnum,
             request.Optional,
-            request.ShopExtern);
+            request.ShopExtern,
+            request.ChipIcon,
+            request.ChipText);
+
         package.DomainEvents.Add(EntityCreatedEvent.WithEntity(package));
         await _repository.AddAsync(package, cancellationToken);
 

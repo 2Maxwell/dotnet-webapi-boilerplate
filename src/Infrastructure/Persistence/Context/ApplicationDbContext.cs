@@ -5,6 +5,7 @@ using FSH.WebApi.Application.Common.Interfaces;
 using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Catalog;
 using FSH.WebApi.Domain.Environment;
+using FSH.WebApi.Domain.Helper;
 using FSH.WebApi.Domain.Hotel;
 using FSH.WebApi.Infrastructure.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,24 @@ public class ApplicationDbContext : BaseDbContext
     public DbSet<PriceCat> PriceCat => Set<PriceCat>();
     public DbSet<Tax> Tax => Set<Tax>();
     public DbSet<TaxItem> TaxItem => Set<TaxItem>();
+    public DbSet<Picture> Picture => Set<Picture>();
+    public DbSet<Salutation> Salutation => Set<Salutation>();
+    public DbSet<Country> Country => Set<Country>();
+    public DbSet<Person> Person => Set<Person>();
+    public DbSet<Company> Company => Set<Company>();
+    public DbSet<VipStatus> VipStatus => Set<VipStatus>();
+    public DbSet<StateRegion> StateRegion => Set<StateRegion>();
+    public DbSet<PriceTagDetail> PriceTagDetail => Set<PriceTagDetail>();
+    public DbSet<PriceTag> PriceTag => Set<PriceTag>();
+    public DbSet<Reservation> Reservation => Set<Reservation>();
+    public DbSet<PackageExtend> PackageExtend => Set<PackageExtend>();
+    public DbSet<MandantNumbers> MandantNumbers => Set<MandantNumbers>();
+    public DbSet<MandantSetting> MandantSetting => Set<MandantSetting>();
+    public DbSet<VCat> VCat => Set<VCat>();
+    public DbSet<RoomReservation> RoomReservation => Set<RoomReservation>();
+    public DbSet<Booking> Booking => Set<Booking>();
+    public DbSet<Journal> Journal => Set<Journal>();
+    public DbSet<ItemPriceTax> ItemPriceTax => Set<ItemPriceTax>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

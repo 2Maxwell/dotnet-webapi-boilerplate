@@ -1,5 +1,4 @@
 ﻿using FSH.WebApi.Domain.Hotel;
-
 namespace FSH.WebApi.Application.Hotel.BookingPolicys;
 
 public class GetBookingPolicySelectRequest : IRequest<List<BookingPolicySelectDto>>
@@ -29,4 +28,3 @@ public class GetBookingPolicySelectRequestHandler : IRequestHandler<GetBookingPo
         await _repository.ListAsync((ISpecification<BookingPolicy, BookingPolicySelectDto>)new BookingPolicyByMandantIdSpec(request.MandantId), cancellationToken)
                 ?? throw new NotFoundException(string.Format(_localizer["BookingPolicySelect.notfound"], request.MandantId));
 }
-

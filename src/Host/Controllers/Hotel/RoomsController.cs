@@ -1,5 +1,4 @@
-﻿using FSH.WebApi.Application.Hotel.Categorys;
-using FSH.WebApi.Application.Hotel.Rooms;
+﻿using FSH.WebApi.Application.Hotel.Rooms;
 
 namespace FSH.WebApi.Host.Controllers.Hotel;
 public class RoomsController : VersionedApiController
@@ -46,4 +45,19 @@ public class RoomsController : VersionedApiController
             : Ok(await Mediator.Send(request));
     }
 
+    [HttpGet("getRoomSelectDto/{mandantId:int}")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search rooms for select.", "")]
+    public Task<List<RoomSelectDto>> GetRoomSelectDtoAsync(int mandantId)
+    {
+        return Mediator.Send(new GetRoomSelectDtoRequest(mandantId));
+    }
+
+    [HttpPost("getRoomCleanReservationSelectDto")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search rooms clean/dirty with no roomReservation for select.", "")]
+    public Task<List<RoomSelectDto>> GetRoomCleanReservationRoomSelectDtoAsync(GetRoomCleanReservationSelectRequest request)
+    {
+        return Mediator.Send(request);
+    }
 }

@@ -49,4 +49,13 @@ public class ItemController : VersionedApiController
 
         return Ok(await Mediator.Send(request));
     }
+
+    [HttpPost("getItemsCashier")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search prepared Items for Cashier.", "")]
+    public Task<List<ItemCashierDto>> GetItemsCashierAsync(GetItemsCashierRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
 }

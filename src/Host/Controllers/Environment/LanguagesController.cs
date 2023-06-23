@@ -1,4 +1,5 @@
 ﻿using FSH.WebApi.Application.Environment.Languages;
+// using FSH.WebApi.Application.Environment.Salutations;
 
 namespace FSH.WebApi.Host.Controllers.Environment;
 public class LanguagesController : VersionedApiController
@@ -39,6 +40,15 @@ public class LanguagesController : VersionedApiController
 
         return Ok(await Mediator.Send(request));
     }
+
+    [HttpGet("getLanguageSelect")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search languages for select.", "")]
+    public Task<List<LanguageSelectDto>> GetLanguageSelectAsync()
+    {
+        return Mediator.Send(new GetLanguageSelectRequest());
+    }
+
 
     // nicht implementiert
     // [HttpDelete("{id:int}")]

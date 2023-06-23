@@ -17,37 +17,33 @@ public class Item : AuditableEntity<int>, IAggregateRoot
     public string Name { get; set; }
     [Range(1000, 99999, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
     public int ItemNumber { get; set; }
-    public int TaxId { get; set; }
-    public decimal Price { get; set; }
+    // public int TaxId { get; set; }
+    // public decimal Price { get; set; }
     public int ItemGroupId { get; set; }
     public bool Automatic { get; set; } = false;
+    public int InvoicePosition { get; set; }
+    public int AccountNumber { get; set; }
     public virtual ItemGroup ItemGroup { get; set; }
-    // public virtual Tax Tax { get; set; }
 
-    // TODO InvoicePosition, AccountNumber
-
-
-    public Item(int mandantId, string name, int itemNumber, int taxId, decimal price, int itemGroupId, bool automatic)
+    public Item(int mandantId, string name, int itemNumber, int itemGroupId, bool automatic, int invoicePosition, int accountNumber)
     {
         MandantId = mandantId;
         Name = name;
         ItemNumber = itemNumber;
-        TaxId = taxId;
-        Price = price;
         ItemGroupId = itemGroupId;
         Automatic = automatic;
+        InvoicePosition = invoicePosition;
+        AccountNumber = accountNumber;
     }
 
-    public Item Update(string name, int itemNumber, int taxId, decimal price, int itemGroupId, bool automatic)
+    public Item Update(string name, int itemNumber, int itemGroupId, bool automatic, int invoicePosition, int accountNumber)
     {
         if (name is not null && Name?.Equals(name) is not true) Name = name;
         if (itemNumber > 999 && ItemNumber != 0) ItemNumber = itemNumber;
-        TaxId = taxId;
-        Price = price;
         ItemGroupId = itemGroupId;
         Automatic = automatic;
+        InvoicePosition = invoicePosition;
+        AccountNumber = accountNumber;
         return this;
     }
-
-
 }

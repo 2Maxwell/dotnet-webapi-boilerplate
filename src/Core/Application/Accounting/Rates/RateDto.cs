@@ -41,4 +41,8 @@ public class RateDto : IDto
     public bool RuleFlex { get; set; }
     public int RateTypeEnumId { get; set; } // Base, Season, Event, Fair
     public int RateScopeEnumId { get; set; } // Public, Private
+    public string? DisplayHighLight { get; set; }
+    public string? ConfirmationText { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
 }

@@ -21,6 +21,8 @@ public class UpdateRateRequest : IRequest<int>
         get
         {
             IEnumerable<string> value = Packages.Split(',', StringSplitOptions.TrimEntries).AsEnumerable();
+            if (value == null) value = Enumerable.Empty<string>();
+
             return value;
         }
     }
@@ -39,6 +41,11 @@ public class UpdateRateRequest : IRequest<int>
     public bool RuleFlex { get; set; }
     public int RateTypeEnumId { get; set; } // Base, Season, Event, Fair
     public int RateScopeEnumId { get; set; } // Public, Private
+    public string? DisplayHighLight { get; set; }
+    public string? ConfirmationText { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
+
 }
 
 public class UpdateRateRequestValidator : CustomValidator<UpdateRateRequest>
@@ -64,12 +71,18 @@ public class UpdateRateRequestValidator : CustomValidator<UpdateRateRequest>
         RuleFor(x => x.Description)
             .NotEmpty()
             .MaximumLength(200);
-        RuleFor(x => x.DisplayShort)
-            .NotEmpty()
-           .MaximumLength(150);
         RuleFor(x => x.Display)
-            .NotEmpty()
             .MaximumLength(500);
+        RuleFor(x => x.DisplayShort)
+            .MaximumLength(300);
+        RuleFor(x => x.DisplayHighLight)
+            .MaximumLength(300);
+        RuleFor(x => x.ConfirmationText)
+            .MaximumLength(500);
+        RuleFor(x => x.ChipIcon)
+            .MaximumLength(100);
+        RuleFor(x => x.ChipText)
+            .MaximumLength(50);
         RuleFor(x => x.Packages)
             .MaximumLength(200);
         RuleFor(x => x.Categorys)
@@ -109,8 +122,11 @@ public class UpdateRateRequestHandler : IRequestHandler<UpdateRateRequest, int>
             request.Categorys,
             request.RuleFlex,
             request.RateTypeEnumId,
-            request.RateScopeEnumId
-            );
+            request.RateScopeEnumId,
+            request.DisplayHighLight,
+            request.ConfirmationText,
+            request.ChipIcon,
+            request.ChipText);
 
         rate.DomainEvents.Add(EntityUpdatedEvent.WithEntity(rate));
         await _repository.UpdateAsync(rate, cancellationToken);

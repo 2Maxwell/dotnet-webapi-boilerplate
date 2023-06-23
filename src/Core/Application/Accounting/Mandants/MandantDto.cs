@@ -7,4 +7,5 @@ public class MandantDto : IDto
     public string? Name { get; set; }
     public int GroupMember { get; set; }
     public bool GroupHead { get; set; }
+    public DateTime? HotelDate { get; set; }
 }

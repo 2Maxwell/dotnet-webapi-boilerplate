@@ -1,4 +1,7 @@
-﻿using FSH.WebApi.Application.Hotel.Packages;
+﻿using FSH.WebApi.Application.Accounting.Items;
+using FSH.WebApi.Application.Accounting.Taxes;
+using FSH.WebApi.Application.Hotel.Packages;
+using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Enums;
 using FSH.WebApi.Domain.Shop;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +11,7 @@ namespace FSH.WebApi.Application.Hotel;
 [NotMapped]
 public class PackageExecution
 {
-    public PackageDto? packageDto { get; set; }
+    public PackageExtendDto? packageExtendedDto { get; set; }
     public DateTime arrival { get; set; }
     public DateTime departure { get; set; }
     public DateTime dateCurrently { get; set; }
@@ -16,9 +19,13 @@ public class PackageExecution
     public decimal priceBreakfast { get; set; }
     public int roomAmount { get; set; }
     public int adults { get; set; }
-    public int childs { get; set; }
+    // public int childs { get; set; }
+    public List<Child>? children { get; set; }
     public int amountBreakfast { get; set; }
-    public int packageAmount { get; set; }
+    public decimal packageAmount { get; set; }
+    public int bookingLineNumber { get; set; }
+    public List<ItemDto>? itemsList { get; set; }
+    public List<TaxDto>? taxesList { get; set; }
 
     public bool isValid
     {
@@ -26,7 +33,7 @@ public class PackageExecution
         {
             bool value = false;
 
-            switch (packageDto.PackageBookingRhythmEnumId)
+            switch (packageExtendedDto.PackageDto.PackageBookingRhythmEnumId)
             {
                 case 100:
                     // 100 = daily
@@ -41,7 +48,18 @@ public class PackageExecution
                     // 210 = on Departure
                     if (departure.Date == dateCurrently.AddDays(1).Date) value = true;
                     break;
-                // TODO 290 per Appointment
+                case 290:
+                    // 290 per Appointment
+                    // wenn noch nicht Status = Booked dann wenn Departure morgen ist dann buchen.
+                    if (packageExtendedDto!.PackageExtendedStateEnum == PackageExtendedStateEnum.cartItem) value = true;
+                    else if (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.pending && departure.Date == dateCurrently.AddDays(1)) value = true;
+                    else if (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.reserved && Convert.ToDateTime(packageExtendedDto.Appointment).Date == dateCurrently.Date) value = true;
+                    break;
+                case 291:
+                    // TODO 291 NumberPrice
+                    // Am AnreiseTag buchen.
+                    if (arrival.Date == dateCurrently.Date) value = true;
+                    break;
                 case 300:
                     // 300 = Monday
                     if (dateCurrently.DayOfWeek == DayOfWeek.Monday) value = true;
@@ -112,174 +130,254 @@ public class PackageExecution
                     if (arrival.Date == dateCurrently.AddDays(-6).Date) value = true;
                     break;
             }
+
             return value;
         }
     }
 
-    public BookingLine getBookingLine
+    public List<BookingLine> getBookingLines
     {
         get
         {
-            BookingLine bl = new BookingLine();
+            List<BookingLine> list = new List<BookingLine>();
 
-            switch (packageDto.PackageBookingBaseEnumId)
+            switch (packageExtendedDto.PackageDto.PackageBookingBaseEnumId)
             {
                 case 100:
                     // 100 per Room
-                    bl.DateBooking = dateCurrently;
-                    bl.Name = packageDto != null ? packageDto.InvoiceName : "not set";
-                    bl.InvoicePos = packageDto.InvoicePosition;
-                    bl.Source = packageDto.Kz;
-                    // bl.includedIn
-                    foreach (var item in packageDto.PackageItems)
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems)
                     {
-                        bl.ItemId = item.ItemId; // package.paket.WarenID;
-                                                 //bl.Warennummer = paket.Waren.Warennummer;
-                                                 //bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        // bl.includedIn
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
 
-                        // bl.ItemName = 
+                        bl.ItemId = item.ItemId; // package.paket.WarenID;
+                        // bl.ItemNumber = ItemTaxList.Where(x => x.Id == item.ItemId).Select(x => x.ItemNumber).FirstOrDefault();
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        // bl.ItemName = ItemTaxList.Where(x => x.Id == item.ItemId).Select(x => x.Name).FirstOrDefault();
+                        bl.ItemName = itDto.Name;
                         bl.Amount = roomAmount;
+
                         // bl.TaxId = item.TaxId;
-                        // bl.TaxSet = 
+                        // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                        bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxRate).FirstOrDefault();
+
                         bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+                    }
+
+                    break;
+
+                case 200:
+                    // 200 per Adult
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems.Where(x => x.Start <= dateCurrently && x.End >= dateCurrently))
+                    {
+                        if (item.ItemId != 0)
+                        {
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                        bl.ItemId = item.ItemId; // package.paket.WarenID;
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        bl.ItemName = itDto.Name;
+                        bl.Amount = adults;
+
+                            // bl.TaxId = item.TaxId;
+                            // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                            bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                            // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                            TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                        bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+
+                        }
 
                     }
 
-
-
-
-                    // bl.PaketmechanikID = paket.PaketmechanikID;
-                    //if (package.Preis == 0 && !string.IsNullOrEmpty(paket.Formel))
-                    //{
-                    //    bl.Betrag = auswertungPaketFormel;
-                    //}
-                    //else
-                    //{
-                    //    bl.Betrag = paket.Preis;
-                    //}
                     break;
-                    //case 2:
-                    //    // 2 per Adult
-                    //    bl.Datum = datum;
-                    //    bl.Beschreibung = paket.Waren.WarenName;
-                    //    bl.WarenID = paket.WarenID;
-                    //    bl.Warennummer = paket.Waren.Warennummer;
-                    //    bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
-                    //    bl.PaketmechanikID = paket.PaketmechanikID;
-                    //    bl.RechPos = paket.RechPos;
-                    //    bl.Menge = erwachsene;
-                    //    bl.Steuersatz = paket.Waren.Steuer.Steuersatz;
 
-                    //    if (paket.Preis == 0 && !string.IsNullOrEmpty(paket.Formel))
-                    //    {
-                    //        bl.Betrag = auswertungPaketFormel;
-                    //    }
-                    //    else
-                    //    {
-                    //        bl.Betrag = paket.Preis;
-                    //    }
-                    //    break;
-                    //case 3:
-                    //    // 3 per Adult
-                    //    bl.Datum = datum;
-                    //    bl.Beschreibung = paket.Waren.WarenName;
-                    //    bl.WarenID = paket.WarenID;
-                    //    bl.Warennummer = paket.Waren.Warennummer;
-                    //    bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
-                    //    bl.PaketmechanikID = paket.PaketmechanikID;
-                    //    bl.RechPos = paket.RechPos;
-                    //    bl.Menge = kinder;
-                    //    bl.Steuersatz = paket.Waren.Steuer.Steuersatz;
+                case 300:
+                    // 300 per Child
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems)
+                    {
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        bl.ItemId = item.ItemId;
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        bl.ItemName = itDto.Name;
+                        bl.Amount = children.Count;
 
-                    //    if (paket.Preis == 0 && !string.IsNullOrEmpty(paket.Formel))
-                    //    {
-                    //        bl.Betrag = auswertungPaketFormel;
-                    //    }
-                    //    else
-                    //    {
-                    //        bl.Betrag = paket.Preis;
-                    //    }
-                    //    break;
-                    //case 4:
-                    //    // 4 per Person
-                    //    bl.Datum = datum;
-                    //    bl.Beschreibung = paket.Waren.WarenName;
-                    //    bl.WarenID = paket.WarenID;
-                    //    bl.Warennummer = paket.Waren.Warennummer;
-                    //    bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
-                    //    bl.PaketmechanikID = paket.PaketmechanikID;
-                    //    bl.RechPos = paket.RechPos;
-                    //    bl.Menge = kinder + erwachsene;
-                    //    bl.Steuersatz = paket.Waren.Steuer.Steuersatz;
+                        // bl.TaxId = item.TaxId;
+                        // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                        bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                        bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+                    }
 
-                    //    if (paket.Preis == 0 && !string.IsNullOrEmpty(paket.Formel))
-                    //    {
-                    //        bl.Betrag = auswertungPaketFormel;
-                    //    }
-                    //    else
-                    //    {
-                    //        bl.Betrag = paket.Preis;
-                    //    }
-                    //    break;
-                    //case 5:
-                    //    // 5 per Breakfast
-                    //    bl.Datum = datum;
-                    //    bl.Beschreibung = paket.Waren.WarenName;
-                    //    bl.Menge = anzFrühstück;
-                    //    bl.Betrag = frstPreis;
-                    //    bl.WarenID = paket.WarenID;
-                    //    bl.Warennummer = paket.Waren.Warennummer;
-                    //    bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
-                    //    bl.PaketmechanikID = paket.PaketmechanikID;
-                    //    bl.RechPos = paket.RechPos;
-                    //    bl.Steuersatz = paket.Waren.Steuer.Steuersatz;
+                    break;
 
-                    //    break;
-                    //case 6:
-                    //    // 6 per Number
-                    //    bl.Datum = datum;
-                    //    bl.Beschreibung = paket.Waren.WarenName;
-                    //    bl.WarenID = paket.WarenID;
-                    //    bl.Warennummer = paket.Waren.Warennummer;
-                    //    bl.warengruppe = paket.Waren.Warengruppe.WarengruppeName;
-                    //    bl.PaketmechanikID = paket.PaketmechanikID;
-                    //    bl.RechPos = paket.RechPos;
-                    //    bl.Menge = anzahl;
-                    //    bl.Steuersatz = paket.Waren.Steuer.Steuersatz;
+                case 310:
+                    // 310 per Child5_15
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems)
+                    {
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        bl.ItemId = item.ItemId;
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        bl.ItemName = itDto.Name;
+                        bl.Amount = children.Where(x => x.Age >= 5 && x.Age <= 15).Count();
 
-                    //    if (paket.Preis == 0 && !string.IsNullOrEmpty(paket.Formel))
-                    //    {
-                    //        bl.Betrag = auswertungPaketFormel;
-                    //    }
-                    //    else
-                    //    {
-                    //        bl.Betrag = paket.Preis;
-                    //    }
-                    //    break;
+                        // bl.TaxId = item.TaxId;
+                        // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                        bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                        bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+                    }
+
+                    break;
+
+                case 400:
+                    // 400 per Person
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems)
+                    {
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        bl.ItemId = item.ItemId;
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        bl.ItemName = itDto.Name;
+                        bl.Amount = adults + children.Count;
+
+                        // bl.TaxId = item.TaxId;
+                        // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                        bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                        bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+                    }
+
+                    break;
+
+                case 500:
+                    // 500 per Breakfast
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems)
+                    {
+                        BookingLine bl = new BookingLine();
+                        bl.DateBooking = dateCurrently;
+                        bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                        bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                        ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                        bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                        bl.ItemId = item.ItemId;
+                        bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                        bl.ItemName = itDto.Name;
+                        bl.Amount = amountBreakfast;
+
+                        // bl.TaxId = item.TaxId;
+                        // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                        bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                        bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                        bl.BookingLineNumberId = bookingLineNumber;
+                        list.Add(bl);
+                    }
+
+                    break;
+
+                case 600:
+                    // 600 per Number
+                    foreach (var item in packageExtendedDto.PackageDto.PackageItems.Where(x => x.Start <= dateCurrently && x.End >= dateCurrently))
+                    {
+                        if (item.ItemId != 0)
+                        {
+                            BookingLine bl = new BookingLine();
+                            bl.DateBooking = dateCurrently;
+                            bl.Name = packageExtendedDto != null ? packageExtendedDto.PackageDto.InvoiceName : "not set";
+                            bl.InvoicePos = packageExtendedDto.PackageDto.InvoicePosition;
+                            ItemDto? itDto = itemsList != null ? itemsList.Where(x => x.Id == item.ItemId).FirstOrDefault() : null;
+                            bl.Source = packageExtendedDto.PackageDto.Id + "|" + packageExtendedDto.PackageDto.Kz;
+                            bl.ItemId = item.ItemId;
+                            bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
+                            bl.ItemName = itDto.Name;
+                            bl.Amount = packageAmount * roomAmount;
+
+                            // bl.TaxId = item.TaxId;
+                            // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
+                            bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
+                            // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                            TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                            bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
+                            bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
+                            bl.BookingLineNumberId = bookingLineNumber;
+                            list.Add(bl);
+                        }
+                    }
+
+                    break;
+
             }
 
-            return bl;
+            return list;
         }
     }
 
     private decimal calculatePackageItemFormula(PackageItemDto item)
     {
-            decimal result = 0;
-            decimal wert = 0;
+        decimal result = 0;
+        decimal wert = 0;
 
-            if (item.PackageItemCoreValueEnumId == (int)PackageItemCoreValueEnum.Roomrate)
-            {
-                wert = priceCatPax;
-            }
-            else if (item.PackageItemCoreValueEnumId == (int)PackageItemCoreValueEnum.OptionalWithPercentage )
-            {
-                wert = priceCatPax;
-            }
+        if (item.PackageItemCoreValueEnumId == (int)PackageItemCoreValueEnum.Roomrate)
+        {
+            wert = priceCatPax;
+        }
+        else if (item.PackageItemCoreValueEnumId == (int)PackageItemCoreValueEnum.OptionalWithPercentage)
+        {
+            wert = priceCatPax;
+        }
+        else if (item.PackageItemCoreValueEnumId == (int)PackageItemCoreValueEnum.PriceLine)
+        {
+            wert = packageExtendedDto.PackageDto.PackageItems.Where(x => x.ItemId == 0 && x.Start <= dateCurrently && x.End >= dateCurrently).Select(x => x.Price).FirstOrDefault();
+        }
 
-            Console.WriteLine("Wert: " + wert);
-            result = wert * item.Percentage;
-            return result;
+        result = (wert * item.Percentage) / 100;
+        return result;
     }
-
 
 }

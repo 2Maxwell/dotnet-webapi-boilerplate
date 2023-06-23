@@ -35,6 +35,14 @@ public class CategorysController : VersionedApiController
         return Mediator.Send(new GetCategorySelectCatPaxRequest(mandantId));
     }
 
+    [HttpGet("getCategoryByBeds/{mandantId:int}&{bedsRequired:int}")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search categorys by bedsRequired.", "")]
+    public Task<List<CategoryDto>> GetCategoryByBedsAsync(int mandantId, int bedsRequired)
+    {
+        return Mediator.Send(new GetCategoryByBedsRequest(mandantId, bedsRequired));
+    }
+
     [HttpGet("getCategoryKzMultiSelect/{mandantId:int}")]
     [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
     [OpenApiOperation("Search categorys kz for multiSelect.", "")]

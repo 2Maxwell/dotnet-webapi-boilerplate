@@ -4,7 +4,7 @@ namespace FSH.WebApi.Application.Hotel.Categorys;
 
 public class GetCategorySelectIsVirtualRequest : IRequest<List<CategorySelectDto>>
 {
-    public int Selector { get; set; } // Selektor -1 = IsVirtual False, 0 = IsVirtual egal, 1 = IsVirtual = True
+    public int Selector { get; set; } // Selector -1 = IsVirtual False, 0 = IsVirtual egal, 1 = IsVirtual = True
     public int MandantId { get; set; }
     public GetCategorySelectIsVirtualRequest(int selector, int mandantId) =>
         (Selector, MandantId) = (selector, mandantId);

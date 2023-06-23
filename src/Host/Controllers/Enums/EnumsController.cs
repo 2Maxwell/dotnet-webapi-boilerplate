@@ -62,4 +62,21 @@ public class EnumsController : VersionedApiController
         return Mediator.Send(new GetTaxSystemEnumRequest());
     }
 
+    [HttpGet("getPackageTargetStringEnum")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get PackageTargetStringEnum as List for MultiSelect.", "")]
+    public Task<List<string>> GetPackageTargetStringEnumRequest()
+    {
+        return Mediator.Send(new GetPackageTargetStringEnum());
+    }
+
+    [HttpGet("getCompanyTypeEnum")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get CompanyTypeEnum as List for Select.", "")]
+    public Task<List<CompanyTypeEnumDto>> GetCompanyTypeEnumRequest()
+    {
+        return Mediator.Send(new GetCompanyTypeEnumRequest());
+    }
+
+
 }

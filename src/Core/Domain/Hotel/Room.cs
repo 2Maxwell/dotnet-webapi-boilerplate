@@ -46,6 +46,25 @@ public class Room : AuditableEntity<int>, IAggregateRoot
     [StringLength(50)]
     public string? PhoneNumber { get; set; }
     public string? PhoneNumberUnique { get; set; }
+    public bool ArrExp { get; set; }
+    public bool ArrCi { get; set; }
+    public bool Occ { get; set; }
+    public bool DepExp { get; set; }
+    public bool DepOut { get; set; }
+
+    //Status für Zimmerreinigung
+    public bool Assigned { get; set; }
+    public int DirtyDays { get; set; }
+    public int AssignedId { get; set; } // Zimmermädchen zugewiesen
+    public bool IsCleaning { get; set; }
+    public bool PendingClean { get; set; }
+    public bool CleanChecked { get; set; }
+    public int MinutesOccupied { get; set; }
+    public int MinutesDeparture { get; set; }
+    public int MinutesDefault { get; set; }
+
+    // TODO Zusätzliche Anlagen z.B. Gästetoilette, Flur, Treppenhaus, Empfangshalle anlegen können um
+    // diese bei Reinigungsarbeiten zuteilen zu können.
 
     public virtual Category Category { get; private set; } = default!;
 
@@ -95,5 +114,88 @@ public class Room : AuditableEntity<int>, IAggregateRoot
         return this;
     }
 
+    public Room SetRoomStateCheckIn(bool arrivalExpected, bool arrivalCheckIn, bool occupied, bool clean)
+    {
+        ArrExp = arrivalExpected;
+        ArrCi = arrivalCheckIn;
+        Occ = occupied;
+        Clean = clean;
+
+        return this;
+    }
+
+    public Room SetRoomStateCheckOut(bool occupied, bool departureExpected, bool departureOut)
+    {
+        Occ = occupied;
+        DepExp = departureExpected;
+        DepOut = departureOut;
+        return this;
+    }
+
+    public Room SetRoomStateNightAuditOccupied(DateOnly hotelDate, DateOnly arrivalDate, DateOnly departureDate)
+    {
+        // nur für Reservierungen die im Haus sind
+        if (hotelDate == arrivalDate)
+        {
+            ArrExp = false;
+            ArrCi = false;
+            Occ = true;
+            DepExp = false;
+            DepOut = false;
+            Clean = false;
+            DirtyDays = DirtyDays++;
+            Assigned = false;
+            IsCleaning = false;
+            PendingClean = false;
+            CleanChecked = false;
+        }
+
+        if (hotelDate == departureDate.AddDays(-1))
+        {
+            DepExp = true;
+            DepOut = false;
+        }
+
+        return this;
+    }
+
+    public Room SetRoomStateArrivalExpected()
+    {
+        ArrExp = true;
+        ArrCi = false;
+        return this;
+    }
+
+    public Room SetRoomStateAssignToCleaning(bool assigned, int assignedId)
+    {
+        Assigned = assigned;
+        AssignedId = assignedId;
+        return this;
+    }
+
+    public Room SetRoomStateIsCleaning(bool isCleaning)
+    {
+        IsCleaning = isCleaning;
+        return this;
+    }
+
+    public Room SetRoomStatePendingClean(bool pendingClean)
+    {
+        PendingClean = pendingClean;
+        return this;
+    }
+
+    public Room SetRoomStateCleanChecked(bool cleanChecked)
+    {
+        CleanChecked = cleanChecked;
+        Clean = cleanChecked ? true : false;
+        return this;
+    }
+
+    public Room SetRoomStateCleanDirty(bool clean)
+    {
+        Clean = clean;
+        return this;
+    }
 
 }

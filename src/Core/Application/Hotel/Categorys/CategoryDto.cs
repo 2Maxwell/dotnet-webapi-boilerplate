@@ -13,12 +13,16 @@ public class CategoryDto : IDto
     public bool VkatDone { get; set; }
     public int NumberOfBeds { get; set; }
     public int NumberOfExtraBeds { get; set; }
-    public string? DisplayDescriptionShort { get; set; }
-    public string? DisplayHightlights { get; set; }
+    public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
     public bool CategoryIsVirtual { get; set; }
     public int VirtualSourceCategoryId { get; set; }
     public string? VirtualCategoryFormula { get; set; }
     public int VirtualImportCategoryId { get; set; }
     public int VirtualCategoryQuantity { get; set; }
     public int CategoryDefaultQuantity { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
+    public string? ConfirmationText { get; set; }
 }

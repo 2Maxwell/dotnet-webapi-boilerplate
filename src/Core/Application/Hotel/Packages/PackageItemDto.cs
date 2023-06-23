@@ -11,4 +11,5 @@ public class PackageItemDto : IDto
     public decimal Percentage { get; set; }
     public int PackageId { get; set; }
     public int PackageItemCoreValueEnumId { get; set; }
+
 }

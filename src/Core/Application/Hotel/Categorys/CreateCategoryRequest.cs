@@ -18,14 +18,19 @@ public class CreateCategoryRequest : IRequest<int>
     public bool VkatDone { get; set; }
     public int NumberOfBeds { get; set; }
     public int NumberOfExtraBeds { get; set; }
-    public string? DisplayDescriptionShort { get; set; }
-    public string? DisplayHightlights { get; set; }
+    public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
     public bool CategoryIsVirtual { get; set; }
     public int VirtualSourceCategoryId { get; set; }
     public string? VirtualCategoryFormula { get; set; }
     public int VirtualImportCategoryId { get; set; }
     public int VirtualCategoryQuantity { get; set; }
     public int CategoryDefaultQuantity { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
+    public string? ConfirmationText { get; set; }
+
 }
 
 public class CreateCategoryRequestValidator : CustomValidator<CreateCategoryRequest>
@@ -46,18 +51,22 @@ public class CreateCategoryRequestValidator : CustomValidator<CreateCategoryRequ
 
         RuleFor(x => x.Description)
             .MaximumLength(500);
-
         RuleFor(x => x.Properties)
             .MaximumLength(500);
-
-        RuleFor(x => x.DisplayDescriptionShort)
+        RuleFor(x => x.Display)
             .MaximumLength(500);
-
-        RuleFor(x => x.DisplayHightlights)
-            .MaximumLength(500);
-
+        RuleFor(x => x.DisplayShort)
+            .MaximumLength(300);
+        RuleFor(x => x.DisplayHighLight)
+            .MaximumLength(300);
         RuleFor(x => x.VirtualCategoryFormula)
             .MaximumLength(200);
+        RuleFor(x => x.ConfirmationText)
+            .MaximumLength(500);
+        RuleFor(x => x.ChipIcon)
+            .MaximumLength(100);
+        RuleFor(x => x.ChipText)
+            .MaximumLength(50);
     }
 }
 
@@ -92,14 +101,18 @@ public class CreateCategoryRequestHandler : IRequestHandler<CreateCategoryReques
             request.VkatDone,
             request.NumberOfBeds,
             request.NumberOfExtraBeds,
-            request.DisplayDescriptionShort,
-            request.DisplayHightlights,
+            request.Display,
+            request.DisplayShort,
+            request.DisplayHighLight,
             request.CategoryIsVirtual,
             request.VirtualSourceCategoryId,
             request.VirtualCategoryFormula,
             request.VirtualImportCategoryId,
             request.VirtualCategoryQuantity,
-            request.CategoryDefaultQuantity);
+            request.CategoryDefaultQuantity,
+            request.ChipIcon,
+            request.ChipText,
+            request.ConfirmationText);
 
         // Add Domain Events to be raised after the commit
         category.DomainEvents.Add(EntityCreatedEvent.WithEntity(category));

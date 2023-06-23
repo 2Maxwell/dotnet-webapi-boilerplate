@@ -37,17 +37,15 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
                 .HasMaxLength(500);
 
         builder
-            .Property(b => b.DisplayDescriptionShort)
-                .HasMaxLength(500);
+            .Property(b => b.DisplayShort)
+                .HasMaxLength(300);
 
         builder
-            .Property(b => b.DisplayHightlights)
-                .HasMaxLength(500);
+            .Property(b => b.DisplayHighLight)
+                .HasMaxLength(300);
 
         builder
             .Property(b => b.VirtualCategoryFormula)
                 .HasMaxLength(200);
-
-
     }
 }

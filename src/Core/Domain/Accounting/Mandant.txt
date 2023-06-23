@@ -1,0 +1,16 @@
+﻿Mandant:
+
+Configeinstellung
+- HotelDatum OK
+- InvoiceNumber OK
+- GroupNumber OK
+- Transfer default (ItemNumbers) OK
+- PhantomNumber OK
+- Tax CountryId Deutschland = 49 LänderCode OK
+- Anzahl Tag ForeCast VKAT OK
+- Anreisezeit allgemein OK
+- Abreisezeit allgemein OK
+- Business Travel Default Text Vermeidung von Bettensteuer
+- PreisfreigabeShopMandant für Preisermittlung im Shop
+- PreisfreigabeChannel
+- PreisfreigabeShopMandantPublic

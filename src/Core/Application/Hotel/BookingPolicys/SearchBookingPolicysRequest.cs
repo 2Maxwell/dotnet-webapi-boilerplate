@@ -11,6 +11,7 @@ public class BookingPolicysBySearchRequestSpec : EntitiesByPaginationFilterSpec<
     public BookingPolicysBySearchRequestSpec(SearchBookingPolicysRequest request)
         : base(request) =>
         Query
+        .Where(x => x.MandantId == request.MandantId)
         .OrderBy(p => p.Name, !request.HasOrderBy());
 }
 

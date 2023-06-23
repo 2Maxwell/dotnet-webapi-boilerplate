@@ -7,9 +7,6 @@ public class PriceCat : AuditableEntity<int>, IAggregateRoot
 {
     [Required]
     public int MandantId { get; set; }
-    // [Required]
-
-    // public int RateId { get; set; }
     [Required]
     public int CategoryId { get; set; }
     [Required]
@@ -32,8 +29,6 @@ public class PriceCat : AuditableEntity<int>, IAggregateRoot
     public PriceCat(int mandantId, int categoryId, DateTime datePrice, int pax, decimal rateCurrent, decimal rateStart, decimal rateAutomatic, string? eventDates, int rateTypeEnumId)
     {
         MandantId = mandantId;
-
-        // RateId = rateId;
         CategoryId = categoryId;
         DatePrice = datePrice;
         Pax = pax;

@@ -1,4 +1,5 @@
 ﻿using FSH.WebApi.Application.Accounting.Rates;
+using FSH.WebApi.Application.Hotel.Categorys;
 
 namespace FSH.WebApi.Host.Controllers.Accounting;
 public class RatesController : VersionedApiController
@@ -36,4 +37,13 @@ public class RatesController : VersionedApiController
     {
         return Mediator.Send(new GetRateRequest(id));
     }
+
+    [HttpPost("getRateShopMandantRecalculateRequest")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("get recalculated RateShopMandantDto after Packages change ", "")]
+    public Task<RateShopMandantDto> GetRateShopMandantRecalculateRequestAsync(GetRateShopMandantRecalculateRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
 }

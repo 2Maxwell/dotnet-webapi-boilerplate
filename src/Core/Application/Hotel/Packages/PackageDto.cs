@@ -12,12 +12,17 @@ public class PackageDto : IDto
     public string? Kz { get; set; }
     public string? Description { get; set; }
     public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
+    public string? ConfirmationText { get; set; }
     public int InvoicePosition { get; set; } = 1;
     public string? InvoiceName { get; set; }
     public int PackageBookingBaseEnumId { get; set; }
     public int PackageBookingRhythmEnumId { get; set; }
+    public string? PackageTargetEnum { get; set; }
     public bool Optional { get; set; }
     public bool ShopExtern { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
     public List<PackageItemDto>? PackageItems { get; set; } = new();
-
 }

@@ -1,6 +1,4 @@
 ﻿using FSH.WebApi.Application.Accounting.Mandants;
-using FSH.WebApi.Application.Hotel.Categorys;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FSH.WebApi.Host.Controllers.Accounting;
 public class MandantsController : VersionedApiController
@@ -37,5 +35,21 @@ public class MandantsController : VersionedApiController
         return id != request.Id
             ? BadRequest()
             : Ok(await Mediator.Send(request));
+    }
+
+    [HttpPost("getMandantNumber")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get MandantNumbers.", "NumberTyp: GroupMaster, Phantom, Invoice, Journal, Reservation")]
+    public Task<int> GetMandantNumberAsync(GetMandantNumberRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    [HttpGet("getMandantSetting")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get MandantSetting.", "")]
+    public Task<MandantSettingDto> GetMandantSettingAsync(int mandantId)
+    {
+        return Mediator.Send(new GetMandantSettingRequest(mandantId));
     }
 }

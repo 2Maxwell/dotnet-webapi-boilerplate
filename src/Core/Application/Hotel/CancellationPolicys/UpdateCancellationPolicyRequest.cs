@@ -11,13 +11,16 @@ public class UpdateCancellationPolicyRequest : IRequest<int>
     public string? Name { get; set; }
     public string? Kz { get; set; }
     public string? Description { get; set; }
-    public string? DisplayShort { get; set; }
     public string? Display { get; set; }
+    public string? DisplayShort { get; set; }
+    public string? DisplayHighLight { get; set; }
     public string? ConfirmationText { get; set; }
     public bool IsDefault { get; set; }
     public int FreeCancellationDays { get; set; }
     public int Priority { get; set; }
     public int NoShow { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
 }
 
 public class GetBookingPolicyRequestHandler : IRequestHandler<GetBookingPolicyRequest, BookingPolicyDto>
@@ -43,11 +46,6 @@ public class GetBookingPolicyRequestHandler : IRequestHandler<GetBookingPolicyRe
     }
 }
 
-//public class BookingPolicyByIdSpec : Specification<BookingPolicy, BookingPolicyDto>, ISingleResultSpecification
-//{
-//    public BookingPolicyByIdSpec(int id) => Query.Where(x => x.Id == id);
-//}
-
 public class UpdateCancellationPolicyRequestHandler : IRequestHandler<UpdateCancellationPolicyRequest, int>
 {
     private readonly IRepositoryWithEvents<CancellationPolicy> _repository;
@@ -64,13 +62,16 @@ public class UpdateCancellationPolicyRequestHandler : IRequestHandler<UpdateCanc
             request.Name,
             request.Kz,
             request.Description,
-            request.DisplayShort,
             request.Display,
+            request.DisplayShort,
+            request.DisplayHighLight,
             request.ConfirmationText,
             request.IsDefault,
             request.FreeCancellationDays,
             request.Priority,
-            request.NoShow
+            request.NoShow,
+            request.ChipIcon,
+            request.ChipText
             );
 
         cancellationPolicy.DomainEvents.Add(EntityUpdatedEvent.WithEntity(cancellationPolicy));

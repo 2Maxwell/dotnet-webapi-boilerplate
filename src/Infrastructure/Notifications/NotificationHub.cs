@@ -30,7 +30,7 @@ public class NotificationHub : Hub, ITransientService
 
         await base.OnConnectedAsync();
 
-        _logger.LogInformation("A client connected to NotificationHub: {connectionId}", Context.ConnectionId);
+        _logger.LogInformation($"A client connected to NotificationHub: {Context.ConnectionId}", Context.ConnectionId);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -39,6 +39,6 @@ public class NotificationHub : Hub, ITransientService
 
         await base.OnDisconnectedAsync(exception);
 
-        _logger.LogInformation("A client disconnected from NotificationHub: {connectionId}", Context.ConnectionId);
+        _logger.LogInformation($"A client disconnected from NotificationHub: {Context.ConnectionId}", Context.ConnectionId);
     }
 }

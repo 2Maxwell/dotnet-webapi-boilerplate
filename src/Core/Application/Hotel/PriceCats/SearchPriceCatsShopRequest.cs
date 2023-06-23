@@ -16,7 +16,7 @@ public class PriceCatShopByShopRequestSpec : Specification<PriceCat, PriceCatDto
     {
         Query
             .Where(x => x.MandantId == request.MandantId &&
-                x.Pax >= request.Pax &&
+                x.Pax == request.Pax &&
                 x.CategoryId == request.CategoryId &&
                 (x.DatePrice >= request.Start && x.DatePrice <= request.End))
             .OrderBy(x => x.CategoryId)

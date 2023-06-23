@@ -36,6 +36,7 @@ public class MandantByKzSpec : Specification<Mandant>, ISingleResultSpecificatio
 public class CreateMandantRequestHandler : IRequestHandler<CreateMandantRequest, int>
 {
     private readonly IRepository<Mandant> _repository;
+    private readonly IRepository<MandantNumbers> _repositoryMandantNumbers;
     public CreateMandantRequestHandler(IRepository<Mandant> repository) => _repository = repository;
 
     public async Task<int> Handle(CreateMandantRequest request, CancellationToken cancellationToken)
@@ -48,6 +49,17 @@ public class CreateMandantRequestHandler : IRequestHandler<CreateMandantRequest,
 
         mandant.DomainEvents.Add(EntityCreatedEvent.WithEntity(mandant));
         await _repository.AddAsync(mandant, cancellationToken);
+
+        var mandantNumbers = new MandantNumbers(
+            mandant.Id,
+            10000,
+            30000,
+            0,
+            0,
+            500000);
+        mandantNumbers.DomainEvents.Add(EntityCreatedEvent.WithEntity(mandantNumbers));
+        await _repositoryMandantNumbers.AddAsync(mandantNumbers, cancellationToken);
+
         return mandant.Id;
     }
 }

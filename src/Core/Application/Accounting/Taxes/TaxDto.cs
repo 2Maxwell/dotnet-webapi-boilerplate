@@ -1,6 +1,4 @@
-﻿using FSH.WebApi.Domain.Accounting;
-
-namespace FSH.WebApi.Application.Accounting.Taxes;
+﻿namespace FSH.WebApi.Application.Accounting.Taxes;
 public class TaxDto : IDto
 {
     public int Id { get; set; }

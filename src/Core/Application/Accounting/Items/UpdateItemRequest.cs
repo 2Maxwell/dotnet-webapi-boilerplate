@@ -1,10 +1,5 @@
-﻿using FSH.WebApi.Application.Accounting.ItemGroups;
+﻿using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Common.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.Accounting.Items;
 
@@ -12,21 +7,27 @@ public class UpdateItemRequest : IRequest<int>
 {
     public int Id { get; set; }
     public int MandantId { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public int ItemNumber { get; set; }
-    public int TaxId { get; set; }
-    public decimal Price { get; set; }
     public int ItemGroupId { get; set; }
     public bool Automatic { get; set; }
+    public int InvoicePosition { get; set; }
+    public int AccountNumber { get; set; }
+    public List<ItemPriceTaxDto>? PriceTaxesDto { get; set; }
 }
 
 public class UpdateItemRequestHandler : IRequestHandler<UpdateItemRequest, int>
 {
     private readonly IRepository<Item> _repository;
+    private readonly IRepository<ItemPriceTax> _priceTaxRepository;
     private readonly IStringLocalizer<UpdateItemRequestHandler> _localizer;
 
-    public UpdateItemRequestHandler(IRepository<Item> repository, IStringLocalizer<UpdateItemRequestHandler> localizer) =>
-    (_repository, _localizer) = (repository, localizer);
+    public UpdateItemRequestHandler(IRepository<Item> repository, IRepository<ItemPriceTax> priceTaxRepository, IStringLocalizer<UpdateItemRequestHandler> localizer)
+    {
+        _repository = repository;
+        _priceTaxRepository = priceTaxRepository;
+        _localizer = localizer;
+    }
 
     public async Task<int> Handle(UpdateItemRequest request, CancellationToken cancellationToken)
     {
@@ -35,18 +36,36 @@ public class UpdateItemRequestHandler : IRequestHandler<UpdateItemRequest, int>
         _ = item ?? throw new NotFoundException(string.Format(_localizer["Item.notfound"], request.Id));
 
         var updatedItem = item.Update(
-            request.Name,
+            request.Name!,
             request.ItemNumber,
-            request.TaxId,
-            request.Price,
             request.ItemGroupId,
-            request.Automatic
-            );
+            request.Automatic,
+            request.InvoicePosition,
+            request.AccountNumber);
 
         // Add Domain Events to be raised after the commit
         item.DomainEvents.Add(EntityUpdatedEvent.WithEntity(item));
-
         await _repository.UpdateAsync(updatedItem, cancellationToken);
+
+        if (request.PriceTaxesDto is not null && request.PriceTaxesDto.Count() > 0)
+        {
+            foreach (var priceTax in request.PriceTaxesDto)
+            {
+                var existingPriceTax = await _priceTaxRepository.GetByIdAsync(priceTax.Id, cancellationToken);
+                if (existingPriceTax is not null)
+                {
+                    var updatedPriceTax = existingPriceTax.Update(priceTax.Price, priceTax.TaxId, priceTax.Start, priceTax.End);
+                    existingPriceTax.DomainEvents.Add(EntityUpdatedEvent.WithEntity(existingPriceTax));
+                    await _priceTaxRepository.UpdateAsync(updatedPriceTax, cancellationToken);
+                }
+                else
+                {
+                    var newPriceTax = new ItemPriceTax(request.MandantId, item.Id, priceTax.Price, priceTax.TaxId, priceTax.Start, priceTax.End);
+                    newPriceTax.DomainEvents.Add(EntityCreatedEvent.WithEntity(newPriceTax));
+                    await _priceTaxRepository.AddAsync(newPriceTax, cancellationToken);
+                }
+            }
+        }
 
         return request.Id;
     }

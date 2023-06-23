@@ -36,20 +36,20 @@ public class UpdateTaxRequestValidator : CustomValidator<UpdateTaxRequest>
 public class UpdateTaxRequestHandler : IRequestHandler<UpdateTaxRequest, int>
 {
     private readonly IRepositoryWithEvents<Tax> _repository;
-    private readonly IStringLocalizer<UpdateTaxRequestHandler> _localizer;
+    private readonly IStringLocalizer _t;
     private readonly IRepositoryWithEvents<TaxItem> _taxItemRepository;
 
     public UpdateTaxRequestHandler(IRepositoryWithEvents<Tax> repository, IStringLocalizer<UpdateTaxRequestHandler> localizer, IRepositoryWithEvents<TaxItem> taxItemRepository)
     {
         _repository = repository;
-        _localizer = localizer;
+        _t = localizer;
         _taxItemRepository = taxItemRepository;
     }
 
     public async Task<int> Handle(UpdateTaxRequest request, CancellationToken cancellationToken)
     {
         var tax = await _repository.GetByIdAsync(request.Id, cancellationToken);
-        _ = tax ?? throw new NotFoundException(string.Format(_localizer["tax.notfound"], request.Id));
+        _ = tax ?? throw new NotFoundException(string.Format(_t["tax.notfound"], request.Id));
         tax.Update(
             request.CountryId,
             request.Name,

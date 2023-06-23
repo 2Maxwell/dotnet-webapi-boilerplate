@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSH.WebApi.Domain.Accounting;
 
@@ -12,6 +13,10 @@ public class Mandant : AuditableEntity<int>, IAggregateRoot
     [Required]
     public int GroupMember { get; set; }
     public bool GroupHead { get; set; } = false;
+    [DataType(DataType.Date)]
+    [Column(TypeName = "Date")]
+    public DateTime HotelDate { get; set; }
+    public int TaxCountryId { get; set; }
 
     public Mandant()
     {
@@ -35,6 +40,10 @@ public class Mandant : AuditableEntity<int>, IAggregateRoot
         return this;
     }
 
+    public Mandant UpdateHotelDate(DateTime hotelDate)
+    {
+        HotelDate = hotelDate;
+        return this;
+    }
+
 }
-
-

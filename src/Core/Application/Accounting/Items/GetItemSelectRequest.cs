@@ -23,3 +23,10 @@ public class ItemByMandantIdAndMandantId0Spec : Specification<Item, ItemSelectDt
     public ItemByMandantIdAndMandantId0Spec(int mandantId) =>
         Query.Where(i => i.MandantId == mandantId || i.MandantId == 0);
 }
+
+public class ItemsByMandantIdAndMandantId0Spec : Specification<Item, ItemDto>
+{
+    public ItemsByMandantIdAndMandantId0Spec(int mandantId) =>
+        Query
+        .Where(i => i.MandantId == mandantId || i.MandantId == 0);
+}

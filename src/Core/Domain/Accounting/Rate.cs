@@ -16,7 +16,7 @@ public class Rate : AuditableEntity<int>, IAggregateRoot
     [StringLength(200)]
     public string? Description { get; set; }
     [Required]
-    [StringLength(150)]
+    [StringLength(300)]
     public string? DisplayShort { get; set; }
     [Required]
     [StringLength(500)]
@@ -30,8 +30,16 @@ public class Rate : AuditableEntity<int>, IAggregateRoot
     public bool RuleFlex { get; set; }
     public int RateTypeEnumId { get; set; } // Base, Season, Event, Fair
     public int RateScopeEnumId { get; set; } // Public, Private
+    [StringLength(300)]
+    public string? DisplayHighLight { get; set; }
+    [StringLength(500)]
+    public string? ConfirmationText { get; set; }
+    [StringLength(100)]
+    public string? ChipIcon { get; set; }
+    [StringLength(50)]
+    public string? ChipText { get; set; }
 
-    public Rate(int mandantId, string? name, string? kz, string? description, string? displayShort, string? display, int bookingPolicyId, int cancellationPolicyId, string? packages, string? categorys, bool ruleFlex, int rateTypeEnumId, int rateScopeEnumId)
+    public Rate(int mandantId, string? name, string? kz, string? description, string? displayShort, string? display, int bookingPolicyId, int cancellationPolicyId, string? packages, string? categorys, bool ruleFlex, int rateTypeEnumId, int rateScopeEnumId, string? displayHighLight, string? confirmationText, string? chipIcon, string? chipText)
     {
         MandantId = mandantId;
         Name = name;
@@ -46,9 +54,13 @@ public class Rate : AuditableEntity<int>, IAggregateRoot
         RuleFlex = ruleFlex;
         RateTypeEnumId = rateTypeEnumId;
         RateScopeEnumId = rateScopeEnumId;
+        DisplayHighLight = displayHighLight;
+        ConfirmationText = confirmationText;
+        ChipIcon = chipIcon;
+        ChipText = chipText;
     }
 
-    public Rate Update(string? name, string? kz, string? description, string? displayShort, string? display, int bookingPolicyId, int cancellationPolicyId, string? packages, string? categorys, bool ruleFlex, int rateTypeEnumId, int rateScopeEnumId)
+    public Rate Update(string? name, string? kz, string? description, string? displayShort, string? display, int bookingPolicyId, int cancellationPolicyId, string? packages, string? categorys, bool ruleFlex, int rateTypeEnumId, int rateScopeEnumId, string? displayHighLight, string? confirmationText, string? chipIcon, string? chipText)
     {
         // MandantId = mandantId;
         if (name is not null && Name?.Equals(name) is not true) Name = name;
@@ -63,6 +75,10 @@ public class Rate : AuditableEntity<int>, IAggregateRoot
         RuleFlex = ruleFlex;
         RateTypeEnumId = rateTypeEnumId;
         RateScopeEnumId = rateScopeEnumId;
+        if (displayHighLight is not null && DisplayHighLight?.Equals(displayHighLight) is not true) DisplayHighLight = displayHighLight;
+        if (confirmationText is not null && confirmationText?.Equals(confirmationText) is not true) ConfirmationText = confirmationText;
+        if (chipIcon is not null && ChipIcon?.Equals(chipIcon) is not true) ChipIcon = chipIcon;
+        if (chipText is not null && ChipText?.Equals(chipText) is not true) ChipText = chipText;
         return this;
     }
 }

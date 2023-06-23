@@ -1,0 +1,6 @@
+Packages ein gültigkeitsdatum geben
+die dann nur in diesem Zeitraum buchbar sind
+z.B. Grünkohlessen, Spargelessen oder andere Aktivitäten
+nur im Sommer oder nur im Winter
+prüfen ob das über PackageItem realisiert werden kann
+ein Eintrag mit Start und End ohne Preis oder Prozent

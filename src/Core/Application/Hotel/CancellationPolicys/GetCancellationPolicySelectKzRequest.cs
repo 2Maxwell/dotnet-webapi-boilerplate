@@ -17,7 +17,6 @@ public class CancellationPolicySelectKzByMandantIdSpec : Specification<Cancellat
     }
 }
 
-
 public class GetCancellationPolicySelectKzRequestHandler : IRequestHandler<GetCancellationPolicySelectKzRequest, List<CancellationPolicySelectKzDto>>
 {
     private readonly IRepository<CancellationPolicy> _repository;

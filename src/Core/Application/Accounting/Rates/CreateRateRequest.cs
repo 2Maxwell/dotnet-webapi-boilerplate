@@ -15,10 +15,33 @@ public class CreateRateRequest : IRequest<int>
     public int BookingPolicyId { get; set; }
     public int CancellationPolicyId { get; set; }
     public string? Packages { get; set; } // Value ist Packages.Kz mit , als Trenner
+    public IEnumerable<string> IEPackages
+    {
+        get
+        {
+            IEnumerable<string> value = Packages.Split(',', StringSplitOptions.TrimEntries).AsEnumerable();
+            return value;
+        }
+    }
+
     public string? Categorys { get; set; } // Value ist Category mit , als Trenner
+    public IEnumerable<string> IECategorys
+    {
+        get
+        {
+            // string[] getrennt = Categorys.Split(',');
+            IEnumerable<string> value = Categorys.Split(',', StringSplitOptions.TrimEntries).AsEnumerable();
+            return value;
+        }
+    }
+
     public bool RuleFlex { get; set; }
     public int RateTypeEnumId { get; set; } // Base, Season, Event, Fair
     public int RateScopeEnumId { get; set; } // Public, Private
+    public string? DisplayHighLight { get; set; }
+    public string? ConfirmationText { get; set; }
+    public string? ChipIcon { get; set; }
+    public string? ChipText { get; set; }
 }
 
 public class CreateRateRequestValidator : CustomValidator<CreateRateRequest>
@@ -43,12 +66,18 @@ public class CreateRateRequestValidator : CustomValidator<CreateRateRequest>
         RuleFor(x => x.Description)
             .NotEmpty()
             .MaximumLength(200);
-        RuleFor(x => x.DisplayShort)
-            .NotEmpty()
-           .MaximumLength(150);
         RuleFor(x => x.Display)
-            .NotEmpty()
             .MaximumLength(500);
+        RuleFor(x => x.DisplayShort)
+            .MaximumLength(300);
+        RuleFor(x => x.DisplayHighLight)
+            .MaximumLength(300);
+        RuleFor(x => x.ConfirmationText)
+            .MaximumLength(500);
+        RuleFor(x => x.ChipIcon)
+            .MaximumLength(100);
+        RuleFor(x => x.ChipText)
+            .MaximumLength(50);
         RuleFor(x => x.Packages)
             .MaximumLength(200);
         RuleFor(x => x.Categorys)
@@ -96,8 +125,14 @@ public class CreateRateRequestHandler : IRequestHandler<CreateRateRequest, int>
             request.Categorys,
             request.RuleFlex,
             request.RateTypeEnumId,
-            request.RateScopeEnumId
-            );
+            request.RateScopeEnumId,
+            request.DisplayHighLight,
+            request.ConfirmationText,
+            request.ChipIcon,
+            request.ChipText);
+
+        if(!rate.Packages.Contains("logis")) rate.Packages = "logis, " + rate.Packages;
+
         rate.DomainEvents.Add(EntityCreatedEvent.WithEntity(rate));
         await _repository.AddAsync(rate, cancellationToken);
 
