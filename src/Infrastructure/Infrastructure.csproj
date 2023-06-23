@@ -11,6 +11,8 @@
         <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="6.0.1" />
         <PackageReference Include="ClosedXML" Version="0.95.4" />
         <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="FastReport.OpenSource" Version="2023.2.18" />
+        <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.2.18" />
         <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="6.7.2" />
         <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="6.7.2" />
         <PackageReference Include="Hangfire" Version="1.7.30" />
@@ -29,6 +31,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="6.0.5" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.6.0" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
