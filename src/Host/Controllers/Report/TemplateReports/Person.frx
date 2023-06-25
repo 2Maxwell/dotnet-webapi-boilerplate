@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/24/2023 16:47:28" ReportInfo.Modified="06/25/2023 19:37:36" ReportInfo.CreatorVersion="2023.2.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="PersonAddressReportDto" ReferenceName="PersonAddressReportDtoRef" DataType="System.Int32" Enabled="true">
+      <Column Name="FirstName" DataType="System.String"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="ReportPage1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2"/>
+    <PageHeaderBand Name="PageHeader1" Top="4" Width="718.2"/>
+    <ReportSummaryBand Name="ReportSummary1" Top="8" Width="718.2"/>
+    <PageFooterBand Name="PageFooter1" Top="12" Width="718.2" Height="349.65">
+      <TextObject Name="Text1" Left="160.65" Top="56.7" Width="94.5" Height="18.9" Text="[PersonAddressReportDto.FirstName]" Font="Arial, 10pt"/>
+      <TextObject Name="Text2" Left="311.85" Top="9.45" Width="207.9" Height="18.9" Text="This is a report" Font="Arial, 10pt"/>
+      <TextObject Name="Text3" Left="481.95" Top="56.7" Width="94.5" Height="18.9" Text="[PersonAddressReportDto.FirstName]" Font="Arial, 10pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

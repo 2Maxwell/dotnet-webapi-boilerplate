@@ -8,9 +8,9 @@ public class PersonAddressReportDto : IDto
     public string? Address2 { get; set; }
     public string? Zip { get; set; }
     public string? City { get; set; }
-    public int CountryId { get; set; }
-    public int StateRegionId { get; set; }
-    public string SalutationName { get; set; }
-    public string SalutationLetterGreeting { get; set; }
-    public string SalutationLetterClosing { get; set; }
+    public int? CountryId { get; set; }
+    public int? StateRegionId { get; set; }
+    public string? SalutationName { get; set; }
+    public string? SalutationLetterGreeting { get; set; }
+    public string? SalutationLetterClosing { get; set; }
 }

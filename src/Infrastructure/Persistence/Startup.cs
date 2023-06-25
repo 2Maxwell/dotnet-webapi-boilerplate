@@ -1,14 +1,17 @@
 using FSH.WebApi.Application.Common.Persistence;
+using FSH.WebApi.Application.ReportsContract;
 using FSH.WebApi.Domain.Common.Contracts;
 using FSH.WebApi.Infrastructure.Common;
 using FSH.WebApi.Infrastructure.Persistence.ConnectionString;
 using FSH.WebApi.Infrastructure.Persistence.Context;
 using FSH.WebApi.Infrastructure.Persistence.Initialization;
 using FSH.WebApi.Infrastructure.Persistence.Repository;
+using FSH.WebApi.Infrastructure.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Serilog;
 
@@ -41,6 +44,7 @@ internal static class Startup
             .AddTransient<ApplicationDbSeeder>()
             .AddServices(typeof(ICustomSeeder), ServiceLifetime.Transient)
             .AddTransient<CustomSeederRunner>()
+            .AddScoped(typeof(IReportService<>), typeof(ReportService<>))
 
             .AddTransient<IConnectionStringSecurer, ConnectionStringSecurer>()
             .AddTransient<IConnectionStringValidator, ConnectionStringValidator>()

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.ReportsContract;
-public interface IReportService
+public interface IReportService<T>
+    where T : class
 {
+    Task<byte[]> GenerateReport(string templatePath, List<T> data, string dataRef);
 }
