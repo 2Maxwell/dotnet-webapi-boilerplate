@@ -40,7 +40,6 @@ public class Booking : AuditableEntity<int>, IAggregateRoot
     public decimal Amount { get; set; }
     [Required]
     public decimal Price { get; set; }
-    public decimal PriceTotal => Price * Amount;
     public bool Debit { get; set; }
     [Required]
     public int ItemId { get; set; }

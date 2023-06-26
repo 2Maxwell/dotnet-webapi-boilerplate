@@ -1,6 +1,7 @@
 using FSH.WebApi.Application.Common.Persistence;
 using FSH.WebApi.Application.ReportsContract;
 using FSH.WebApi.Domain.Common.Contracts;
+using FSH.WebApi.Infrastructure.Bookings;
 using FSH.WebApi.Infrastructure.Common;
 using FSH.WebApi.Infrastructure.Persistence.ConnectionString;
 using FSH.WebApi.Infrastructure.Persistence.Context;
@@ -45,6 +46,8 @@ internal static class Startup
             .AddServices(typeof(ICustomSeeder), ServiceLifetime.Transient)
             .AddTransient<CustomSeederRunner>()
             .AddScoped(typeof(IReportService<>), typeof(ReportService<>))
+            .AddScoped<IBookingService, BookingService>()
+
 
             .AddTransient<IConnectionStringSecurer, ConnectionStringSecurer>()
             .AddTransient<IConnectionStringValidator, ConnectionStringValidator>()

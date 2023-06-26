@@ -3,6 +3,7 @@ using FSH.WebApi.Application;
 using FSH.WebApi.Host.Configurations;
 using FSH.WebApi.Host.Controllers;
 using FSH.WebApi.Infrastructure;
+using FSH.WebApi.Infrastructure.Bookings;
 using FSH.WebApi.Infrastructure.Common;
 using Serilog;
 
@@ -24,6 +25,8 @@ try
     builder.Services.AddControllers().AddFluentValidation();
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication();
+
+    builder.Services.AddScoped<IBookingService, BookingService>();
 
     var app = builder.Build();
 

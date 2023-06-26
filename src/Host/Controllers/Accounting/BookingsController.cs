@@ -1,8 +1,12 @@
-﻿using FSH.WebApi.Application.Accounting.Bookings;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using FSH.WebApi.Application.Accounting.Bookings;
+using FSH.WebApi.Application.Reports;
+using MediatR;
 
 namespace FSH.WebApi.Host.Controllers.Accounting;
 public class BookingsController : VersionedApiController
 {
+
     [HttpPost]
     [MustHavePermission(FSHAction.Create, FSHResource.Brands)]
     [OpenApiOperation("Create a new Booking.", "")]
@@ -26,4 +30,6 @@ public class BookingsController : VersionedApiController
     {
         return Mediator.Send(request);
     }
+
+
 }
