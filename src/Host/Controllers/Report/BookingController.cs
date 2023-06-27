@@ -22,4 +22,7 @@ public class BookingController : VersionedApiController
 
         return Ok(res);
     }
+
+    // Create a controller for GetReservationsReportRequest
+    // I'm thinking about if it is better placed here or in the ReservationController
 }
