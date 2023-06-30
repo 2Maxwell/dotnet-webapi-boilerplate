@@ -22,7 +22,7 @@ public class ReportController : VersionedApiController
     {
         var req = new GenerateReportsRequest() { PersonAddressReportDtos = data };
 
-        var res = _mediator.Send(req);
+        var res = await _mediator.Send(req);
 
         return Ok(res);
     }

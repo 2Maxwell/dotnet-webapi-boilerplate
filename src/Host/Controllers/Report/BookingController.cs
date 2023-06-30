@@ -18,7 +18,7 @@ public class BookingController : VersionedApiController
     {
         var req = new GetBookingReportRequest() { BookingReportDto = reportDto };
 
-        var res = _mediator.Send(req);
+        var res = await _mediator.Send(req);
 
         return Ok(res);
     }
