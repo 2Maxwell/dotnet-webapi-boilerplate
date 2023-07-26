@@ -3,29 +3,6 @@
 namespace FSH.WebApi.Domain.Accounting;
 public class Booking : AuditableEntity<int>, IAggregateRoot
 {
-    public Booking(int mandantId, DateTime bookingDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, int? bookingLineNumberId, int taxId, decimal taxRate, int invoicePos, int state, int? invoiceId, int? referenceId, int? kasseId)
-    {
-        MandantId = mandantId;
-        BookingDate = bookingDate;
-        HotelDate = hotelDate;
-        ReservationId = reservationId!;
-        Name = name;
-        Amount = amount;
-        Price = price;
-        Debit = debit;
-        ItemId = itemId;
-        ItemNumber = itemNumber;
-        Source = source;
-        BookingLineNumberId = bookingLineNumberId!;
-        TaxId = taxId;
-        TaxRate = taxRate;
-        InvoicePos = invoicePos;
-        State = state;
-        InvoiceId = invoiceId;
-        ReferenceId = referenceId;
-        KasseId = kasseId;
-    }
-
     [Required]
     public int MandantId { get; set; }
     [Required]
@@ -47,7 +24,7 @@ public class Booking : AuditableEntity<int>, IAggregateRoot
     public int ItemNumber { get; set; }
     [Required]
     [StringLength(100)]
-    public string Source { get; set; } // Vorgang; PackageKz = P:Kz
+    public string Source { get; set; } // Vorgang Cashier, NightAudit, Depositzahlung, ... ; PackageKz = P:Kz
     public int? BookingLineNumberId { get; set; } // Id für zusammengehörige Zeilen
     [Required]
     public int TaxId { get; set; } // kommt von Item Datumsabhängig
@@ -56,8 +33,31 @@ public class Booking : AuditableEntity<int>, IAggregateRoot
     public int InvoicePos { get; set; }
     public int State { get; set; }
     public int? InvoiceId { get; set; }
-    public int? ReferenceId { get; set; }
+    public int? ReferenceId { get; set; } // keine Ahnung was ich damit machen soll
     public int? KasseId { get; set; }
+
+    public Booking(int mandantId, DateTime bookingDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, int? bookingLineNumberId, int taxId, decimal taxRate, int invoicePos, int state, int? invoiceId, int? referenceId, int? kasseId)
+    {
+        MandantId = mandantId;
+        BookingDate = bookingDate;
+        HotelDate = hotelDate;
+        ReservationId = reservationId;
+        Name = name;
+        Amount = amount;
+        Price = price;
+        Debit = debit;
+        ItemId = itemId;
+        ItemNumber = itemNumber;
+        Source = source;
+        BookingLineNumberId = bookingLineNumberId;
+        TaxId = taxId;
+        TaxRate = taxRate;
+        InvoicePos = invoicePos;
+        State = state;
+        InvoiceId = invoiceId;
+        ReferenceId = referenceId;
+        KasseId = kasseId;
+    }
 
 
     // Was ist veränderbar nach der Erstellung?

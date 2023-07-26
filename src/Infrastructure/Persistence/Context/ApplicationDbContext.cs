@@ -59,6 +59,10 @@ public class ApplicationDbContext : BaseDbContext
     public DbSet<Booking> Booking => Set<Booking>();
     public DbSet<Journal> Journal => Set<Journal>();
     public DbSet<ItemPriceTax> ItemPriceTax => Set<ItemPriceTax>();
+    public DbSet<MandantDetail> MandantDetail => Set<MandantDetail>();
+    public DbSet<Invoice> Invoice => Set<Invoice>();
+    public DbSet<InvoiceDetail> InvoiceDetail => Set<InvoiceDetail>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -54,8 +54,6 @@ public class CreateBookingRequestHandler : IRequestHandler<CreateBookingRequest,
 
     public async Task<int> Handle(CreateBookingRequest request, CancellationToken cancellationToken)
     {
-
-
         var booking = new Booking(
             request.MandantId,
             DateTime.Now,
@@ -68,7 +66,7 @@ public class CreateBookingRequestHandler : IRequestHandler<CreateBookingRequest,
             request.ItemId,
             request.ItemNumber,
             request.Source!,
-            request.BookingLineNumberId,
+            request.BookingLineNumberId == 0 ? null : request.BookingLineNumberId,
             request.TaxId,
             request.TaxRate,
             request.InvoicePos,

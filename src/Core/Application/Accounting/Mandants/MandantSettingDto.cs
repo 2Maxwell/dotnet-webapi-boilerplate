@@ -9,4 +9,5 @@ public class MandantSettingDto : IDto
     public DateTime DefaultDepartureTime { get; set; }
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
+    public int DefaultGuestId { get; set; }
 }

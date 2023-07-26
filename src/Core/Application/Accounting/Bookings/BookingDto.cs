@@ -8,7 +8,7 @@ public class BookingDto : IDto
     public string? Name { get; set; }
     public decimal Amount { get; set; }
     public decimal Price { get; set; }
-    public decimal Debit { get; set; }
+    public bool Debit { get; set; }
     public int ItemId { get; set; }
     public int ItemNumber { get; set; }
     public string? Source { get; set; }

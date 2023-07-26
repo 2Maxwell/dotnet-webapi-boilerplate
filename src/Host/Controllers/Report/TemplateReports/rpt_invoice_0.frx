@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/23/2023 11:28:19" ReportInfo.Modified="07/24/2023 19:22:07" ReportInfo.CreatorVersion="2023.2.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="invoiceReportDto" ReferenceName="invoiceReportDto" DataType="System.Int32" Enabled="true">
+      <Column Name="InvoiceDto" DataType="System.Int32">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="InvoiceIdMandant" DataType="System.Int32"/>
+        <Column Name="CreditId" DataType="System.Int32"/>
+        <Column Name="ReservationId" DataType="System.Int32"/>
+        <Column Name="BookerId" DataType="System.Int32"/>
+        <Column Name="GuestId" DataType="System.Int32"/>
+        <Column Name="CompanyId" DataType="System.Int32"/>
+        <Column Name="CompanyContactId" DataType="System.Int32"/>
+        <Column Name="TravelAgentId" DataType="System.Int32"/>
+        <Column Name="TravelAgentContactId" DataType="System.Int32"/>
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="DateCurrent" DataType="System.DateTime"/>
+        <Column Name="InvoiceAddressJson" DataType="System.String"/>
+        <Column Name="InvoiceAddressSource" DataType="System.Int32"/>
+        <Column Name="Notes" DataType="System.String"/>
+        <Column Name="State" DataType="System.Int32"/>
+        <Column Name="InvoiceTotal" DataType="System.Decimal"/>
+        <Column Name="InvoiceTotalNet" DataType="System.Decimal"/>
+        <Column Name="InvoiceTaxesJson" DataType="System.String"/>
+        <Column Name="InvoicePaymentsJson" DataType="System.String"/>
+        <Column Name="InvoicePosition" DataType="System.Int32"/>
+        <Column Name="FileName" DataType="System.String"/>
+        <Column Name="InvoiceKz" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="InvoiceDetails" DataType="System.Int32" Enabled="true">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="InvoiceId" DataType="System.Int32"/>
+        <Column Name="InvoiceIdMandant" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="BookingId" DataType="System.Int32"/>
+        <Column Name="BookingDate" DataType="System.DateTime"/>
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="ReservationId" DataType="System.Int32"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="Amount" DataType="System.Decimal"/>
+        <Column Name="Price" DataType="System.Decimal"/>
+        <Column Name="Debit" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="ItemId" DataType="System.Int32"/>
+        <Column Name="ItemNumber" DataType="System.Int32"/>
+        <Column Name="Source" DataType="System.String"/>
+        <Column Name="BookingLineNumberId" DataType="System.Int32"/>
+        <Column Name="TaxId" DataType="System.Int32"/>
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="InvoicePos" DataType="System.Int32"/>
+        <Column Name="State" DataType="System.Int32"/>
+        <Column Name="ReferenceId" DataType="System.Int32"/>
+      </BusinessObjectDataSource>
+      <Column Name="MandantDetailDto" DataType="System.Int32">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="Name1" DataType="System.String"/>
+        <Column Name="Name2" DataType="System.String"/>
+        <Column Name="Address1" DataType="System.String"/>
+        <Column Name="Address2" DataType="System.String"/>
+        <Column Name="Zip" DataType="System.String"/>
+        <Column Name="City" DataType="System.String"/>
+        <Column Name="CountryId" DataType="System.Int32"/>
+        <Column Name="StateRegionId" DataType="System.Int32"/>
+        <Column Name="Telephone" DataType="System.String"/>
+        <Column Name="Telefax" DataType="System.String"/>
+        <Column Name="Mobil" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="EmailInvoice" DataType="System.String"/>
+        <Column Name="WebSite" DataType="System.String"/>
+        <Column Name="LanguageId" DataType="System.Int32"/>
+        <Column Name="BankName" DataType="System.String"/>
+        <Column Name="IBAN" DataType="System.String"/>
+        <Column Name="BIC" DataType="System.String"/>
+        <Column Name="TaxId" DataType="System.String"/>
+        <Column Name="UStId" DataType="System.String"/>
+        <Column Name="Company" DataType="System.String"/>
+        <Column Name="CompanyRegister" DataType="System.String"/>
+      </Column>
+      <Column Name="ReservationDto" DataType="System.Int32">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="ResKz" DataType="System.String"/>
+        <Column Name="BookerId" DataType="System.Int32"/>
+        <Column Name="GuestId" DataType="System.Int32"/>
+        <Column Name="CompanyId" DataType="System.Int32"/>
+        <Column Name="CompanyContactId" DataType="System.Int32"/>
+        <Column Name="TravelAgentId" DataType="System.Int32"/>
+        <Column Name="TravelAgentContactId" DataType="System.Int32"/>
+        <Column Name="Persons" DataType="System.String"/>
+        <BusinessObjectDataSource Name="PersonShopItems" Enabled="false" DataType="System.Int32"/>
+        <Column Name="Arrival" DataType="System.Int32"/>
+        <Column Name="Departure" DataType="System.Int32"/>
+        <Column Name="CategoryId" DataType="System.Int32"/>
+        <Column Name="RoomAmount" DataType="System.Int32"/>
+        <Column Name="RoomNumberId" DataType="System.Int32"/>
+        <Column Name="RoomNumber" DataType="System.String"/>
+        <Column Name="RoomFixed" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="RateId" DataType="System.Int32"/>
+        <Column Name="RatePackages" DataType="System.String"/>
+        <Column Name="LogisTotal" DataType="System.Decimal"/>
+        <Column Name="BookingPolicyId" DataType="System.Int32"/>
+        <Column Name="CancellationPolicyId" DataType="System.Int32"/>
+        <Column Name="IsGroupMaster" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="GroupMasterId" DataType="System.Int32"/>
+        <Column Name="Transfer" DataType="System.String"/>
+        <Column Name="MatchCode" DataType="System.String"/>
+        <Column Name="OptionDate" DataType="System.Int32"/>
+        <Column Name="OptionFollowUp" DataType="System.Int32"/>
+        <Column Name="CRSNumber" DataType="System.String"/>
+        <Column Name="PaxString" DataType="System.String"/>
+        <Column Name="CartId" DataType="System.Int32"/>
+        <Column Name="Confirmations" DataType="System.String"/>
+        <Column Name="Wishes" DataType="System.String"/>
+        <Column Name="RemarksHelper" DataType="System.String"/>
+        <Column Name="Booker" DataType="System.Int32"/>
+        <Column Name="Guest" DataType="System.Int32"/>
+        <Column Name="Company" DataType="System.Int32"/>
+        <Column Name="CompanyContact" DataType="System.Int32"/>
+        <Column Name="TravelAgent" DataType="System.Int32"/>
+        <Column Name="TravelAgentContact" DataType="System.Int32"/>
+        <Column Name="PriceTagDto" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="PackageExtendOptionDtos" Enabled="false" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="BookingLineSummaries" Enabled="false" DataType="System.Int32"/>
+      </Column>
+      <Column Name="InvoiceAddressDto" DataType="System.Int32">
+        <Column Name="Name1" DataType="System.String"/>
+        <Column Name="Name2" DataType="System.String"/>
+        <Column Name="ContactName" DataType="System.String"/>
+        <Column Name="Address1" DataType="System.String"/>
+        <Column Name="Address2" DataType="System.String"/>
+        <Column Name="ZipCode" DataType="System.String"/>
+        <Column Name="City" DataType="System.String"/>
+        <Column Name="Country" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="SendEmail" DataType="System.Boolean" BindableControl="CheckBox"/>
+      </Column>
+      <BusinessObjectDataSource Name="InvoiceTaxDtos" DataType="System.Int32" Enabled="true">
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="TaxAmount" DataType="System.Decimal"/>
+        <Column Name="NetAmount" DataType="System.Decimal"/>
+        <Column Name="TotalAmount" DataType="System.Decimal"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="InvoicePaymentDtos" DataType="System.Int32" Enabled="true">
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="Amount" DataType="System.Decimal"/>
+        <Column Name="Price" DataType="System.Decimal"/>
+        <Column Name="Debit" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="ItemId" DataType="System.Int32"/>
+        <Column Name="ItemNumber" DataType="System.Int32"/>
+        <Column Name="TaxId" DataType="System.Int32"/>
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="KasseId" DataType="System.Int32"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="37.8"/>
+    <PageHeaderBand Name="PageHeader1" Top="41.8" Width="718.2" Height="28.35"/>
+    <DataBand Name="Data1" Top="74.15" Width="718.2" Height="576.45" DataSource="invoiceReportDto">
+      <TextObject Name="Text1" Top="37.8" Width="302.4" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.Name1]" Font="Arial, 10pt"/>
+      <TextObject Name="Text3" Top="56.7" Width="302.4" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.Name2]" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Top="75.6" Width="302.4" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.ContactName]" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Top="94.5" Width="302.4" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.Address1]" Font="Arial, 10pt"/>
+      <TextObject Name="Text6" Top="113.4" Width="302.4" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.Address2]" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Top="132.3" Width="94.5" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.ZipCode]" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="94.5" Top="132.3" Width="207.9" Height="18.9" Text="[invoiceReportDto.InvoiceAddressDto.City]" Font="Arial, 10pt"/>
+      <TableObject Name="Table1" Top="245.7" Width="679.15" Height="94.5">
+        <TableColumn Name="Column1" Width="143.39"/>
+        <TableColumn Name="Column2" Width="143.39"/>
+        <TableColumn Name="Column3" Width="41.33"/>
+        <TableColumn Name="Column4" Width="75.35"/>
+        <TableColumn Name="Column5" Width="143.39"/>
+        <TableColumn Name="Column6"/>
+        <TableColumn Name="Column7"/>
+        <TableRow Name="Row1">
+          <TableCell Name="Cell1" Text="[invoiceReportDto.InvoiceDetails.HotelDate]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell2" Text="[invoiceReportDto.InvoiceDetails.Name]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell3" Text="[invoiceReportDto.InvoiceDetails.Amount]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell4" Text="[invoiceReportDto.InvoiceDetails.Price]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell26" Font="Arial, 10pt"/>
+          <TableCell Name="Cell27" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row2">
+          <TableCell Name="Cell6" Font="Arial, 10pt"/>
+          <TableCell Name="Cell7" Font="Arial, 10pt"/>
+          <TableCell Name="Cell8" Font="Arial, 10pt"/>
+          <TableCell Name="Cell9" Font="Arial, 10pt"/>
+          <TableCell Name="Cell10" Font="Arial, 10pt"/>
+          <TableCell Name="Cell28" Font="Arial, 10pt"/>
+          <TableCell Name="Cell29" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row3">
+          <TableCell Name="Cell11" Font="Arial, 10pt"/>
+          <TableCell Name="Cell12" Font="Arial, 10pt"/>
+          <TableCell Name="Cell13" Font="Arial, 10pt"/>
+          <TableCell Name="Cell14" Font="Arial, 10pt"/>
+          <TableCell Name="Cell15" Font="Arial, 10pt"/>
+          <TableCell Name="Cell30" Font="Arial, 10pt"/>
+          <TableCell Name="Cell31" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row4">
+          <TableCell Name="Cell16" Font="Arial, 10pt"/>
+          <TableCell Name="Cell17" Font="Arial, 10pt"/>
+          <TableCell Name="Cell18" Font="Arial, 10pt"/>
+          <TableCell Name="Cell19" Font="Arial, 10pt"/>
+          <TableCell Name="Cell20" Font="Arial, 10pt"/>
+          <TableCell Name="Cell32" Font="Arial, 10pt"/>
+          <TableCell Name="Cell33" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row5">
+          <TableCell Name="Cell21" Font="Arial, 10pt"/>
+          <TableCell Name="Cell22" Font="Arial, 10pt"/>
+          <TableCell Name="Cell23" Font="Arial, 10pt"/>
+          <TableCell Name="Cell24" Font="Arial, 10pt"/>
+          <TableCell Name="Cell25" Font="Arial, 10pt"/>
+          <TableCell Name="Cell34" Font="Arial, 10pt"/>
+          <TableCell Name="Cell35" Font="Arial, 10pt"/>
+        </TableRow>
+      </TableObject>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="654.6" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>

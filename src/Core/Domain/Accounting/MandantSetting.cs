@@ -11,8 +11,9 @@ public class MandantSetting : AuditableEntity<int>, IAggregateRoot
     public DateTime DefaultDepartureTime { get; set; }
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
+    public int DefaultGuestId { get; set; }
 
-    public MandantSetting(int mandantId, int forecastDays, string? defaultTransfer, DateTime defaultArrivalTime, DateTime defaultDepartureTime, int defaultLanguageId, int defaultCountryId)
+    public MandantSetting(int mandantId, int forecastDays, string? defaultTransfer, DateTime defaultArrivalTime, DateTime defaultDepartureTime, int defaultLanguageId, int defaultCountryId, int defaultGuestId)
     {
         MandantId = mandantId;
         ForecastDays = forecastDays;
@@ -21,9 +22,10 @@ public class MandantSetting : AuditableEntity<int>, IAggregateRoot
         DefaultDepartureTime = defaultDepartureTime;
         DefaultLanguageId = defaultLanguageId;
         DefaultCountryId = defaultCountryId;
+        DefaultGuestId = defaultGuestId;
     }
 
-    public MandantSetting Update(int forecastDays, string? defaultTransfer, DateTime defaultArrivalTime, DateTime defaultDepartureTime, int defaultLanguageId, int defaultCountryId)
+    public MandantSetting Update(int forecastDays, string? defaultTransfer, DateTime defaultArrivalTime, DateTime defaultDepartureTime, int defaultLanguageId, int defaultCountryId, int defaultGuestId)
     {
         ForecastDays = forecastDays;
         DefaultTransfer = defaultTransfer;
@@ -31,6 +33,7 @@ public class MandantSetting : AuditableEntity<int>, IAggregateRoot
         DefaultDepartureTime = defaultDepartureTime;
         DefaultLanguageId = defaultLanguageId;
         DefaultCountryId = defaultCountryId;
+        DefaultGuestId = defaultGuestId;
         return this;
     }
 

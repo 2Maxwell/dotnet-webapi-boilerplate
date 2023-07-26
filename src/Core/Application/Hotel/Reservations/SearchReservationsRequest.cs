@@ -25,6 +25,7 @@ public class ReservationsBySearchRequestArrivalGuestNameCompanyNameSpec : Entiti
             .Include(x => x.Booker).ThenInclude(x => x.Salutation)
             .Include(x => x.Guest).ThenInclude(x => x.Salutation)
             .Include(x => x.Company)
+            .Where(x => x.MandantId == request.MandantId)
             //.Include(x => x.TravelAgent)
             .Where(x => x.Booker.Name!.StartsWith(request.BookerName!) || x.Guest.Name!.StartsWith(request.BookerName!), request.BookerName != null || request.GuestName != null)
             //.Where(x => x.Guest.Name!.StartsWith(request.GuestName!), request.GuestName != null)

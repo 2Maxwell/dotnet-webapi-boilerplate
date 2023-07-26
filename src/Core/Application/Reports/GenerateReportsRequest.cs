@@ -1,11 +1,6 @@
 ﻿using FSH.WebApi.Application.Environment.Persons;
 using FSH.WebApi.Application.ReportsContract;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.Reports;
 public class GenerateReportsRequest : IRequest<FileContentResult>
@@ -22,6 +17,7 @@ public class GenerateReportsRequestHandler : IRequestHandler<GenerateReportsRequ
     {
         _reportService = reportService;
     }
+
     public async Task<FileContentResult> Handle(GenerateReportsRequest request, CancellationToken cancellationToken)
     {
         string dataRef = nameof(PersonAddressReportDto) + "Ref";

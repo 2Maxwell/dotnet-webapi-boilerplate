@@ -37,6 +37,7 @@ public class CreateMandantRequestHandler : IRequestHandler<CreateMandantRequest,
 {
     private readonly IRepository<Mandant> _repository;
     private readonly IRepository<MandantNumbers> _repositoryMandantNumbers;
+
     public CreateMandantRequestHandler(IRepository<Mandant> repository) => _repository = repository;
 
     public async Task<int> Handle(CreateMandantRequest request, CancellationToken cancellationToken)

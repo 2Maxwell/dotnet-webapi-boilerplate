@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using FSH.WebApi.Application.Accounting.Bookings;
-using FSH.WebApi.Application.Reports;
-using MediatR;
+﻿using FSH.WebApi.Application.Accounting.Bookings;
+using FSH.WebApi.Domain.Accounting;
 
 namespace FSH.WebApi.Host.Controllers.Accounting;
 public class BookingsController : VersionedApiController
@@ -22,6 +20,15 @@ public class BookingsController : VersionedApiController
     {
         return Mediator.Send(request);
     }
+
+    [HttpPost("createBookingsBulkInvoice")]
+    [MustHavePermission(FSHAction.Create, FSHResource.Brands)]
+    [OpenApiOperation("Create a new BookingsBulkInvoiceBooking.", "")]
+    public Task<List<BookingDto>> CreateBookingBulkInvoiceAsync(CreateBookingsBulkInvoiceRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
 
     [HttpPost("searchByReservationId")]
     [MustHavePermission(FSHAction.Search, FSHResource.Brands)]

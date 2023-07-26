@@ -11,6 +11,7 @@ public class CreateMandantSettingRequest : IRequest<int>
     public DateTime DefaultDepartureTime { get; set; }
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
+    public int DefaultGuestId { get; set; }
 }
 
 public class CreateMandantSettingRequestValidator : CustomValidator<CreateMandantSettingRequest>
@@ -42,7 +43,8 @@ public class CreateMandantSettingRequestHandler : IRequestHandler<CreateMandantS
             request.DefaultArrivalTime,
             request.DefaultDepartureTime,
             request.DefaultLanguageId,
-            request.DefaultCountryId);
+            request.DefaultCountryId,
+            request.DefaultGuestId);
 
         mandantSetting.DomainEvents.Add(EntityCreatedEvent.WithEntity(mandantSetting));
         await _repository.AddAsync(mandantSetting, cancellationToken);

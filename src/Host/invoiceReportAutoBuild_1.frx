@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/23/2023 11:28:19" ReportInfo.Modified="07/23/2023 11:28:19" ReportInfo.CreatorVersion="2023.2.18.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="invoiceReportDto" ReferenceName="invoiceReportDto" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Application.Accounting.Invoices.InvoiceReportDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+      <Column Name="InvoiceDto" DataType="FSH.WebApi.Application.Accounting.Invoices.InvoiceDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="InvoiceIdMandant" DataType="System.Int32"/>
+        <Column Name="CreditId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="ReservationId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="BookerId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="GuestId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="CompanyId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="CompanyContactId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="TravelAgentId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="TravelAgentContactId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="DateCurrent" DataType="System.DateTime"/>
+        <Column Name="InvoiceAddressJson" DataType="System.String"/>
+        <Column Name="InvoiceAddressSource" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Notes" DataType="System.String"/>
+        <Column Name="State" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="InvoiceTotal" DataType="System.Decimal"/>
+        <Column Name="InvoiceTotalNet" DataType="System.Decimal"/>
+        <Column Name="InvoiceTaxesJson" DataType="System.String"/>
+        <Column Name="InvoicePaymentsJson" DataType="System.String"/>
+        <Column Name="InvoicePosition" DataType="System.Int32"/>
+        <Column Name="FileName" DataType="System.String"/>
+        <Column Name="InvoiceKz" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="InvoiceDetails" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Application.Accounting.Invoices.InvoiceDetailDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="InvoiceId" DataType="System.Int32"/>
+        <Column Name="InvoiceIdMandant" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="BookingId" DataType="System.Int32"/>
+        <Column Name="BookingDate" DataType="System.DateTime"/>
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="ReservationId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="Amount" DataType="System.Decimal"/>
+        <Column Name="Price" DataType="System.Decimal"/>
+        <Column Name="Debit" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="ItemId" DataType="System.Int32"/>
+        <Column Name="ItemNumber" DataType="System.Int32"/>
+        <Column Name="Source" DataType="System.String"/>
+        <Column Name="BookingLineNumberId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="TaxId" DataType="System.Int32"/>
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="InvoicePos" DataType="System.Int32"/>
+        <Column Name="State" DataType="System.Int32"/>
+        <Column Name="ReferenceId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+      </BusinessObjectDataSource>
+      <Column Name="MandantDetailDto" DataType="FSH.WebApi.Application.Accounting.Mandants.MandantDetailDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="Name1" DataType="System.String"/>
+        <Column Name="Name2" DataType="System.String"/>
+        <Column Name="Address1" DataType="System.String"/>
+        <Column Name="Address2" DataType="System.String"/>
+        <Column Name="Zip" DataType="System.String"/>
+        <Column Name="City" DataType="System.String"/>
+        <Column Name="CountryId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="StateRegionId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Telephone" DataType="System.String"/>
+        <Column Name="Telefax" DataType="System.String"/>
+        <Column Name="Mobil" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="EmailInvoice" DataType="System.String"/>
+        <Column Name="WebSite" DataType="System.String"/>
+        <Column Name="LanguageId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="BankName" DataType="System.String"/>
+        <Column Name="IBAN" DataType="System.String"/>
+        <Column Name="BIC" DataType="System.String"/>
+        <Column Name="TaxId" DataType="System.String"/>
+        <Column Name="UStId" DataType="System.String"/>
+        <Column Name="Company" DataType="System.String"/>
+        <Column Name="CompanyRegister" DataType="System.String"/>
+      </Column>
+      <Column Name="ReservationDto" DataType="FSH.WebApi.Application.Hotel.Reservations.ReservationDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="Id" DataType="System.Int32"/>
+        <Column Name="MandantId" DataType="System.Int32"/>
+        <Column Name="ResKz" DataType="System.String"/>
+        <Column Name="BookerId" DataType="System.Int32"/>
+        <Column Name="GuestId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="CompanyId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="CompanyContactId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="TravelAgentId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="TravelAgentContactId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Persons" DataType="System.String"/>
+        <BusinessObjectDataSource Name="PersonShopItems" Enabled="false" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Domain.Shop.PersonShopItem, FSH.WebApi.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <Column Name="Arrival" DataType="System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Departure" DataType="System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="CategoryId" DataType="System.Int32"/>
+        <Column Name="RoomAmount" DataType="System.Int32"/>
+        <Column Name="RoomNumberId" DataType="System.Int32"/>
+        <Column Name="RoomNumber" DataType="System.String"/>
+        <Column Name="RoomFixed" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="RateId" DataType="System.Int32"/>
+        <Column Name="RatePackages" DataType="System.String"/>
+        <Column Name="LogisTotal" DataType="System.Decimal"/>
+        <Column Name="BookingPolicyId" DataType="System.Int32"/>
+        <Column Name="CancellationPolicyId" DataType="System.Int32"/>
+        <Column Name="IsGroupMaster" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="GroupMasterId" DataType="System.Int32"/>
+        <Column Name="Transfer" DataType="System.String"/>
+        <Column Name="MatchCode" DataType="System.String"/>
+        <Column Name="OptionDate" DataType="System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="OptionFollowUp" DataType="System.Int32"/>
+        <Column Name="CRSNumber" DataType="System.String"/>
+        <Column Name="PaxString" DataType="System.String"/>
+        <Column Name="CartId" DataType="System.Nullable`1[[System.Guid, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+        <Column Name="Confirmations" DataType="System.String"/>
+        <Column Name="Wishes" DataType="System.String"/>
+        <Column Name="RemarksHelper" DataType="System.String"/>
+        <Column Name="Booker" DataType="FSH.WebApi.Application.Environment.Persons.PersonDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="Guest" DataType="FSH.WebApi.Application.Environment.Persons.PersonDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="Company" DataType="FSH.WebApi.Domain.Environment.Company, FSH.WebApi.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="CompanyContact" DataType="FSH.WebApi.Application.Environment.Persons.PersonDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="TravelAgent" DataType="FSH.WebApi.Domain.Environment.Company, FSH.WebApi.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="TravelAgentContact" DataType="FSH.WebApi.Application.Environment.Persons.PersonDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <Column Name="PriceTagDto" DataType="FSH.WebApi.Application.Hotel.PriceTags.PriceTagDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <BusinessObjectDataSource Name="PackageExtendOptionDtos" Enabled="false" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Application.Hotel.Packages.PackageExtendDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <BusinessObjectDataSource Name="BookingLineSummaries" Enabled="false" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Domain.Helper.BookingLineSummary, FSH.WebApi.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+      </Column>
+      <Column Name="InvoiceAddressDto" DataType="FSH.WebApi.Application.Accounting.Invoices.InvoiceAddressDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="Name1" DataType="System.String"/>
+        <Column Name="Name2" DataType="System.String"/>
+        <Column Name="ContactName" DataType="System.String"/>
+        <Column Name="Address1" DataType="System.String"/>
+        <Column Name="Address2" DataType="System.String"/>
+        <Column Name="ZipCode" DataType="System.String"/>
+        <Column Name="City" DataType="System.String"/>
+        <Column Name="Country" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="SendEmail" DataType="System.Boolean" BindableControl="CheckBox"/>
+      </Column>
+      <BusinessObjectDataSource Name="InvoiceTaxDtos" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Application.Accounting.Invoices.InvoiceTaxDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="TaxAmount" DataType="System.Decimal"/>
+        <Column Name="NetAmount" DataType="System.Decimal"/>
+        <Column Name="TotalAmount" DataType="System.Decimal"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="InvoicePaymentDtos" DataType="System.Collections.Generic.List`1[[FSH.WebApi.Application.Accounting.Invoices.InvoicePaymentDto, FSH.WebApi.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+        <Column Name="HotelDate" DataType="System.DateTime"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="Amount" DataType="System.Decimal"/>
+        <Column Name="Price" DataType="System.Decimal"/>
+        <Column Name="Debit" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="ItemId" DataType="System.Int32"/>
+        <Column Name="ItemNumber" DataType="System.Int32"/>
+        <Column Name="TaxId" DataType="System.Int32"/>
+        <Column Name="TaxRate" DataType="System.Decimal"/>
+        <Column Name="KasseId" DataType="System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+  </Dictionary>
+</Report>

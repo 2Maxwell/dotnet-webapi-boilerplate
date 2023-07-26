@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/28/2023 22:39:03" ReportInfo.Modified="07/01/2023 12:33:09" ReportInfo.CreatorVersion="2023.2.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="ReservationListDto" ReferenceName="ReservationListDtoRef" DataType="System.Int32" Enabled="true">
+      <Column Name="Id" DataType="System.Int32"/>
+      <Column Name="Arrival" DataType="System.DateTime"/>
+      <Column Name="Departure" DataType="System.DateTime"/>
+      <Column Name="CategoryId" DataType="System.Int32"/>
+      <Column Name="BookerName" DataType="System.String"/>
+      <Column Name="CompanyName" DataType="System.String"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="56.7" CanGrow="true">
+      <TextObject Name="Text5" Left="75.6" Width="189" Height="37.8" Anchor="Top, Bottom, Left, Right" Text="Reservations" Format="Date" Format.Format="d" HorzAlign="Justify" VertAlign="Center" Font="Arial, 16pt, style=Bold"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="60.7" Width="718.2" Height="20.79" Guides="0,0">
+      <TextObject Name="Text7" Left="18.9" Width="56.7" Height="18.9" Text="Id" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="94.5" Width="94.5" Height="18.9" Text="Arrival" Font="Arial, 10pt"/>
+      <TextObject Name="Text10" Left="207.9" Top="1.89" Width="94.5" Height="18.9" Text="Departure" Font="Arial, 10pt"/>
+      <TextObject Name="Text13" Left="321.3" Top="1.89" Width="94.5" Height="18.9" Text="CategoryId" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="434.7" Top="1.89" Width="94.5" Height="18.9" Text="BookerName" Font="Arial, 10pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="85.49" Width="718.2" Height="28.35" Guides="0,0" DataSource="ReservationListDto">
+      <TextObject Name="Text6" Left="18.9" Top="7.56" Width="56.7" Height="18.9" Text="[ReservationListDto.Id]" Font="Arial, 10pt"/>
+      <TextObject Name="Text9" Left="207.9" Top="9.45" Width="94.5" Height="18.9" Text="[ReservationListDto.Departure]" Format="Date" Format.Format="d" Font="Arial, 10pt"/>
+      <TextObject Name="Text11" Left="94.5" Top="9.45" Width="94.5" Height="18.9" Text="[ReservationListDto.Arrival]" Format="Date" Format.Format="d" Font="Arial, 10pt"/>
+      <TextObject Name="Text12" Left="321.3" Top="9.45" Width="94.5" Height="18.9" Text="[ReservationListDto.CategoryId]" Font="Arial, 10pt"/>
+      <TextObject Name="Text14" Left="434.7" Top="9.45" Width="94.5" Height="18.9" Text="[ReservationListDto.BookerName]" Font="Arial, 10pt"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="117.84" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>

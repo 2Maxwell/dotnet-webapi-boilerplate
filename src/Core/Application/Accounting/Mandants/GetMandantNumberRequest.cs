@@ -21,19 +21,16 @@ public class MandantNumbersByMandantIdSpec : Specification<MandantNumbers>, ISin
 
 public class GetMandantNumberRequestHandler : IRequestHandler<GetMandantNumberRequest, int>
 {
-    private readonly IStringLocalizer<GetMandantNumberRequest> _localizer;
     private readonly IRepository<MandantNumbers> _repository;
 
-    public GetMandantNumberRequestHandler(IStringLocalizer<GetMandantNumberRequest> localizer, IRepository<MandantNumbers> repository)
+    public GetMandantNumberRequestHandler(IRepository<MandantNumbers> repository)
     {
-        _localizer = localizer;
         _repository = repository;
     }
 
     public async Task<int> Handle(GetMandantNumberRequest request, CancellationToken cancellationToken)
     {
-        var numbers = await _repository.ListAsync(
-            (ISpecification<MandantNumbers>)new MandantNumbersByMandantIdSpec(request.MandantId), cancellationToken);
+        var numbers = await _repository.ListAsync(new MandantNumbersByMandantIdSpec(request.MandantId), cancellationToken);
         MandantNumbers resultNumbers;
         int result = 0;
         switch (request.NumberTyp)

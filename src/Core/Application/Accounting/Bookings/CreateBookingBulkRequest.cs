@@ -1,17 +1,36 @@
-﻿using FSH.WebApi.Domain.Accounting;
+﻿using FSH.WebApi.Application.Accounting.Mandants;
+using FSH.WebApi.Domain.Accounting;
 
 namespace FSH.WebApi.Application.Accounting.Bookings;
 public class CreateBookingBulkRequest : IRequest<bool>
 {
+    // Diese Request kann nur für Buchung auf Konten Gast im Haus genutzt werden.
+    // Bei Buchungen die eine Rechnung zur Folge haben muss der RückgabeTyp
+    // List<Booking> sein. Dann kann die Rechnung erstellt werden und die Buchungen
+    // sind mit der Id gekennzeichnet.
+
     public List<CreateBookingRequest>? CreateBookingRequestList { get; set; }
 }
 
 public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulkRequest, bool>
 {
     private readonly IRepository<Booking> _repository;
-    public CreateBookingBulkRequestHandler(IRepository<Booking> repository) => _repository = repository;
+    private readonly IRepository<Journal> _journalRepository;
+    private readonly IRepository<MandantNumbers> _mandantNumbersRepository;
+
+    public CreateBookingBulkRequestHandler(IRepository<Booking> repository, IRepository<Journal> journalRepository, IRepository<MandantNumbers> mandantNumbersRepository)
+    {
+        _repository = repository;
+        _journalRepository = journalRepository;
+        _mandantNumbersRepository = mandantNumbersRepository;
+    }
+
     public async Task<bool> Handle(CreateBookingBulkRequest request, CancellationToken cancellationToken)
     {
+        GetMandantNumberRequest mNumberRequest = new(request.CreateBookingRequestList[0].MandantId, "Journal");
+        GetMandantNumberRequestHandler getMandantNumberRequestHandler = new(_mandantNumbersRepository);
+
+
         foreach (var bookingRequest in request.CreateBookingRequestList!)
         {
             var booking = new Booking(
@@ -26,18 +45,73 @@ public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulk
                 bookingRequest.ItemId,
                 bookingRequest.ItemNumber,
                 bookingRequest.Source!,
-                bookingRequest.BookingLineNumberId,
+                bookingRequest.BookingLineNumberId == 0 ? null : bookingRequest.BookingLineNumberId,
                 bookingRequest.TaxId,
                 bookingRequest.TaxRate,
                 bookingRequest.InvoicePos,
                 1, // State
                 null, // InvoiceId
                 bookingRequest.ReferenceId,
-                0);
-
-            // TODO: Add Journaleintrag mit JournalId in Booking eintragen
+                bookingRequest.KasseId);
 
             await _repository.AddAsync(booking, cancellationToken);
+
+            var journal = new Journal(
+                    booking.MandantId,
+                    await getMandantNumberRequestHandler.Handle(mNumberRequest, cancellationToken),
+                    booking.Id,
+                    DateTime.Now,
+                    booking.HotelDate,
+                    booking.ReservationId,
+                    booking.Name,
+                    booking.Amount,
+                    booking.Price,
+                    booking.Debit,
+                    booking.ItemId,
+                    booking.ItemNumber,
+                    booking.Source,
+                    booking.BookingLineNumberId,
+                    booking.TaxId,
+                    booking.TaxRate,
+                    booking.State,
+                    booking.ReferenceId,
+                    booking.KasseId);
+
+            await _journalRepository.AddAsync(journal, cancellationToken);
+
+            if (bookingRequest.ItemNumber >= 9000)
+            {
+                var cashierJournal = new CashierJournal(
+                    booking.MandantId,
+                    journal.Id,
+                    journal.JournalIdMandant,
+                    journal.BookingId,
+                    null,
+                    null,
+                    journal.JournalDate,
+                    journal.HotelDate,
+                    journal.Name,
+                    journal.Amount,
+                    journal.Price,
+                    journal.Debit,
+                    journal.ItemId,
+                    journal.ItemNumber,
+                    journal.Source,
+                    1, // State
+                    journal.KasseId);
+
+            }
+
+            // TODO: Wenn ItemNumber >= 9000 dann Buchung in CashierJournal eintragen
+            // normalerweise sollte bei einer Zahlung für eine Rechnung die Rechnungs-
+            // Nummer mit eingetragen werden. Keine Ahnung wie das gehen soll.
+
+            // NOTE nach dem RechnungsVorgang wenn RG OK ist dann werden die Buchungen
+            // mit ItemNumber >= 9000 in das CashierJournal eingetragen. Dann steht auch
+            // die Rechnungsnummer fest.
+
+            // NOTE Für CashierJournal ist zwingend die KassenId notwendig also wird auch in Bookings
+            // die KassenId eingetragen.
         }
 
         return true;

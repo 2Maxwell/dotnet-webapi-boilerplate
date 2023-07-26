@@ -30,6 +30,7 @@ public class GetBookingReportRequestHandler : IRequestHandler<GetBookingReportRe
         _reportService = reportService;
         _bookingService = bookingService;
     }
+
     public async Task<FileContentResult> Handle(GetBookingReportRequest request, CancellationToken cancellationToken)
     {
         string dataRef = nameof(BookingDto) + "Ref";

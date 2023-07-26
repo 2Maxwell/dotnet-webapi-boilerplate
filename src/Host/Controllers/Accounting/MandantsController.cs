@@ -52,4 +52,31 @@ public class MandantsController : VersionedApiController
     {
         return Mediator.Send(new GetMandantSettingRequest(mandantId));
     }
+
+    [HttpGet("getFullMandant")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get FullMandant.", "")]
+    public Task<MandantFullDto> GetFullMandantAsync(int mandantId)
+    {
+        return Mediator.Send(new GetFullMandantRequest(mandantId));
+    }
+
+    [HttpPost("createMandantDetail")]
+    [MustHavePermission(FSHAction.Create, FSHResource.Mandants)]
+    [OpenApiOperation("Create mandant details.", "")]
+    public Task<int> CreateMandantDetailAsync(CreateMandantDetailRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+    [HttpPut("updateMandantDetail/{id:int}")]
+    [MustHavePermission(FSHAction.Update, FSHResource.Mandants)]
+    [OpenApiOperation("Update mandant detail.", "")]
+    public async Task<ActionResult<int>> UpdateMandantDetailAsync(UpdateMandantDetailRequest request, int id)
+    {
+        return id != request.Id
+            ? BadRequest()
+            : Ok(await Mediator.Send(request));
+    }
+
 }

@@ -21,6 +21,7 @@
         <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="Accounting\Journal\" />
       <Folder Include="Accounting\PriceCatRates\" />
     </ItemGroup>
 </Project>

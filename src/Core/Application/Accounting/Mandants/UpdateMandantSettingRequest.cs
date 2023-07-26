@@ -12,6 +12,7 @@ public class UpdateMandantSettingRequest : IRequest<int>
     public DateTime DefaultDepartureTime { get; set; }
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
+    public int DefaultGuestId { get; set; }
 }
 
 public class UpdateMandantSettingRequestValidator : CustomValidator<UpdateMandantSettingRequest>
@@ -48,7 +49,8 @@ public class UpdateMandantSettingRequestHandler : IRequestHandler<UpdateMandantS
             request.DefaultArrivalTime,
             request.DefaultDepartureTime,
             request.DefaultLanguageId,
-            request.DefaultCountryId);
+            request.DefaultCountryId,
+            request.DefaultGuestId);
 
         // Add Domain Events to be raised after the commit
         mandantSetting.DomainEvents.Add(EntityUpdatedEvent.WithEntity(mandantSetting));

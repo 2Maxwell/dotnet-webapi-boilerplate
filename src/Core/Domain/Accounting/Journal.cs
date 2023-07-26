@@ -6,11 +6,11 @@ namespace FSH.WebApi.Domain.Accounting;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public class Journal : AuditableEntity<int>, IAggregateRoot
 {
-    public Journal(int mandantId, int journalIdMandant, int bookingIdMandant, DateTime journalDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, int? bookingLineNumberId, int taxId, decimal taxRate, int state, int? referenceId, int? kasseId)
+    public Journal(int mandantId, int journalIdMandant, int bookingId, DateTime journalDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, int? bookingLineNumberId, int taxId, decimal taxRate, int state, int? referenceId, int? kasseId)
     {
         MandantId = mandantId;
         JournalIdMandant = journalIdMandant;
-        BookingIdMandant = bookingIdMandant;
+        BookingId = bookingId;
         JournalDate = journalDate;
         HotelDate = hotelDate;
         ReservationId = reservationId;
@@ -34,12 +34,14 @@ public class Journal : AuditableEntity<int>, IAggregateRoot
     [Required]
     public int JournalIdMandant { get; set; }
     [Required]
-    public int BookingIdMandant { get; set; }
+    public int BookingId { get; set; }
     [Required]
     public DateTime JournalDate { get; set; }
     [Required]
     public DateTime HotelDate { get; set; }
     public int? ReservationId { get; set; }
+    public int? InvoiceId { get; set; }
+    public int? InvoiceIdMandant { get; set; }
     [Required]
     [StringLength(150)]
     public string Name { get; set; }
