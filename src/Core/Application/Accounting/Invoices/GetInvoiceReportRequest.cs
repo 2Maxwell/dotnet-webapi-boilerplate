@@ -34,31 +34,6 @@ public class GetInvoiceReportRequestHandler : IRequestHandler<GetInvoiceReportRe
         _repositoryReservation = repositoryReservation;
     }
 
-    //public async Task<FileContentResult> Handle(GetInvoiceReportRequest request, CancellationToken cancellationToken)
-    //{
-    //    InvoiceReportDto invoiceReportDto = new();
-
-    //    invoiceReportDto.InvoiceDto = await _repositoryInvoice.GetBySpecAsync((ISpecification<Invoice, InvoiceDto>)new GetInvoiceByInvoiceIdMandantSpec(request.InvoiceIdMandant), cancellationToken);
-    //    invoiceReportDto.InvoiceAddressDto = invoiceReportDto.InvoiceDto!.InvoiceAddressJson is not null ? JsonSerializer.Deserialize<InvoiceAddressDto>(invoiceReportDto.InvoiceDto.InvoiceAddressJson) : new();
-    //    invoiceReportDto.InvoiceTaxDtos = invoiceReportDto.InvoiceDto.InvoiceTaxesJson is not null ? JsonSerializer.Deserialize<List<InvoiceTaxDto>>(invoiceReportDto.InvoiceDto.InvoiceTaxesJson) : new List<InvoiceTaxDto>();
-    //    invoiceReportDto.InvoicePaymentDtos = invoiceReportDto.InvoiceDto!.InvoicePaymentsJson is not null ? JsonSerializer.Deserialize<List<InvoicePaymentDto>>(invoiceReportDto.InvoiceDto.InvoicePaymentsJson) : new List<InvoicePaymentDto>();
-    //    // invoiceReportDto.InvoiceDetails = request.InvoiceDetails.Adapt<List<InvoiceDetailDto>>();
-    //    invoiceReportDto.InvoiceDetails = await _repositoryInvoiceDetail.ListAsync((ISpecification<InvoiceDetail, InvoiceDetailDto>)new GetInvoiceDetailByInvoiceIdMandantSpec(request.InvoiceIdMandant), cancellationToken);
-    //    invoiceReportDto.MandantDetailDto = await _repositoryMandantDetail.GetBySpecAsync((ISpecification<MandantDetail, MandantDetailDto>)new GetMandantDetailByIdSpec(invoiceReportDto.InvoiceDto!.MandantId), cancellationToken);
-    //    invoiceReportDto.ReservationDto = invoiceReportDto.InvoiceDto!.ReservationId is not null ? (await _repositoryReservation.GetByIdAsync(invoiceReportDto.InvoiceDto!.ReservationId.Value, cancellationToken)).Adapt<ReservationDto>() : new ReservationDto();
-
-    //    List<InvoiceReportDto> invoiceReportDtos = new();
-    //    invoiceReportDtos.Add(invoiceReportDto);
-
-    //    string dataRef = "invoiceReportDto"; // nameof(InvoiceReportDto);
-    //    byte[] generatedReport = await _reportService.GenerateReportInvoice(ReportTemplatePath, invoiceReportDtos, dataRef);
-
-    //    return new FileContentResult(generatedReport, "application/pdf")
-    //    {
-    //        FileDownloadName = "GeneratedReport.pdf"
-    //    };
-    //}
-
     public async Task<FileContentResult> Handle(GetInvoiceReportRequest request, CancellationToken cancellationToken)
     {
         InvoiceReportDto invoiceReportDto = new();
@@ -72,15 +47,19 @@ public class GetInvoiceReportRequestHandler : IRequestHandler<GetInvoiceReportRe
         invoiceReportDto.InvoiceAddressDto = invoiceReportDto.InvoiceDto.InvoiceAddressJson is null
                                               ? new InvoiceAddressDto()
                                               : JsonSerializer.Deserialize<InvoiceAddressDto>(invoiceReportDto.InvoiceDto.InvoiceAddressJson);
+
         invoiceReportDto.InvoiceTaxDtos = invoiceReportDto.InvoiceDto.InvoiceTaxesJson is null
                                               ? new List<InvoiceTaxDto>()
                                               : JsonSerializer.Deserialize<List<InvoiceTaxDto>>(invoiceReportDto.InvoiceDto.InvoiceTaxesJson);
+
         invoiceReportDto.InvoicePaymentDtos = invoiceReportDto.InvoiceDto.InvoicePaymentsJson is null
                                               ? new List<InvoicePaymentDto>()
                                               : JsonSerializer.Deserialize<List<InvoicePaymentDto>>(invoiceReportDto.InvoiceDto.InvoicePaymentsJson);
+
         invoiceReportDto.InvoiceDetails = await _repositoryInvoiceDetail.ListAsync(
                     (ISpecification<InvoiceDetail, InvoiceDetailDto>)new GetInvoiceDetailByInvoiceIdMandantSpec(request.InvoiceIdMandant),
                     cancellationToken);
+
         invoiceReportDto.MandantDetailDto = await _repositoryMandantDetail.GetBySpecAsync(
                     (ISpecification<MandantDetail, MandantDetailDto>)new GetMandantDetailByIdSpec(invoiceReportDto.InvoiceDto.MandantId),
                     cancellationToken);
