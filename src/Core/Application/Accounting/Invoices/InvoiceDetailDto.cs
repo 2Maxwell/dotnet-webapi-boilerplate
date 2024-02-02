@@ -16,7 +16,7 @@ public class InvoiceDetailDto : IDto
     public int ItemId { get; set; }
     public int ItemNumber { get; set; }
     public string? Source { get; set; } // Vorgang Cashier, NightAudit, Depositzahlung, ... ; PackageKz = P:Kz
-    public int? BookingLineNumberId { get; set; } // Id für zusammengehörige Zeilen
+    public string? BookingLineNumberId { get; set; } // Id für zusammengehörige Zeilen
     public int TaxId { get; set; } // kommt von Item Datumsabhängig
     public decimal TaxRate { get; set; }
     public int InvoicePos { get; set; }

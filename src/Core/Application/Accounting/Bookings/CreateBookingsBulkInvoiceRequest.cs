@@ -16,12 +16,14 @@ public class CreateBookingBulkInvoiceRequestHandler : IRequestHandler<CreateBook
     private readonly IRepository<Booking> _repository;
     private readonly IRepository<Journal> _journalRepository;
     private readonly IRepository<MandantNumbers> _mandantNumbersRepository;
+    private readonly IRepository<CashierJournal> _cashierJournalRepository;
 
-    public CreateBookingBulkInvoiceRequestHandler(IRepository<Booking> repository, IRepository<Journal> journalRepository, IRepository<MandantNumbers> mandantNumbersRepository)
+    public CreateBookingBulkInvoiceRequestHandler(IRepository<Booking> repository, IRepository<Journal> journalRepository, IRepository<MandantNumbers> mandantNumbersRepository, IRepository<CashierJournal> cashierJournalRepository)
     {
         _repository = repository;
         _journalRepository = journalRepository;
         _mandantNumbersRepository = mandantNumbersRepository;
+        _cashierJournalRepository = cashierJournalRepository;
     }
 
     public async Task<List<BookingDto>> Handle(CreateBookingsBulkInvoiceRequest request, CancellationToken cancellationToken)
@@ -46,11 +48,11 @@ public class CreateBookingBulkInvoiceRequestHandler : IRequestHandler<CreateBook
                 bookingRequest.ItemId,
                 bookingRequest.ItemNumber,
                 bookingRequest.Source!,
-                bookingRequest.BookingLineNumberId == 0 ? null : bookingRequest.BookingLineNumberId,
+                bookingRequest.BookingLineNumberId,
                 bookingRequest.TaxId,
                 bookingRequest.TaxRate,
                 bookingRequest.InvoicePos,
-                1, // State
+                bookingRequest.State, 
                 null, // InvoiceId
                 bookingRequest.ReferenceId,
                 bookingRequest.KasseId);
@@ -81,28 +83,30 @@ public class CreateBookingBulkInvoiceRequestHandler : IRequestHandler<CreateBook
 
             await _journalRepository.AddAsync(journal, cancellationToken);
 
-            if (bookingRequest.ItemNumber >= 9000)
-            {
-                var cashierJournal = new CashierJournal(
-                    booking.MandantId,
-                    journal.Id,
-                    journal.JournalIdMandant,
-                    journal.BookingId,
-                    null,
-                    null,
-                    journal.JournalDate,
-                    journal.HotelDate,
-                    journal.Name,
-                    journal.Amount,
-                    journal.Price,
-                    journal.Debit,
-                    journal.ItemId,
-                    journal.ItemNumber,
-                    journal.Source,
-                    1, // State
-                    journal.KasseId);
+            //if (bookingRequest.ItemNumber >= 9000)
+            //{
+            //    var cashierJournal = new CashierJournal(
+            //        booking.MandantId,
+            //        journal.Id,
+            //        journal.JournalIdMandant,
+            //        journal.BookingId,
+            //        null,
+            //        null,
+            //        journal.JournalDate,
+            //        journal.HotelDate,
+            //        journal.Name,
+            //        journal.Amount,
+            //        journal.Price,
+            //        journal.Debit,
+            //        journal.ItemId,
+            //        journal.ItemNumber,
+            //        journal.Source,
+            //        1, // State
+            //        journal.JournalDate,
+            //        journal.KasseId);
 
-            }
+            //    await _cashierJournalRepository.AddAsync(cashierJournal, cancellationToken);
+            //}
         }
 
         return bookingsList;

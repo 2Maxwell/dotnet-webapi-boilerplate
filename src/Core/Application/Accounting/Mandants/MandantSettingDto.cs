@@ -10,4 +10,5 @@ public class MandantSettingDto : IDto
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
     public int DefaultGuestId { get; set; }
+    public int TaxCountryId { get; set; }
 }

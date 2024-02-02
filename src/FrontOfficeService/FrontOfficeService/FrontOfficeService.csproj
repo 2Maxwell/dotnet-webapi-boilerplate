@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-FrontOfficeService-881cf7a0-c37c-44b8-9640-09e64d9f5d59</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+    <AssemblyName>FSH.WebApi.FrontOfficeService</AssemblyName>
+    <RootNamespace>FSH.WebApi.FrontOfficeService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.21" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,4 @@
 ﻿using FSH.WebApi.Domain.Accounting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.Accounting.Bookings;
 public class SearchBookingByReservationIdRequest : IRequest<List<BookingDto>>
@@ -35,6 +30,6 @@ public class BookingByReservationIdSpec : Specification<Booking, List<BookingDto
 {
     public BookingByReservationIdSpec(int mandantId, int reservationId)
     {
-        Query.Where(x => x.MandantId == mandantId && x.ReservationId == reservationId);
+        Query.Where(x => x.MandantId == mandantId && x.ReservationId == reservationId && x.State == 1);
     }
 }

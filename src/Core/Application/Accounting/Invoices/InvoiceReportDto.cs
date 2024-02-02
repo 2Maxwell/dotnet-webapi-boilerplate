@@ -1,13 +1,10 @@
-﻿using FSH.WebApi.Application.Accounting.Mandants;
-using FSH.WebApi.Application.Hotel.Reservations;
-
-namespace FSH.WebApi.Application.Accounting.Invoices;
+﻿namespace FSH.WebApi.Application.Accounting.Invoices;
 public class InvoiceReportDto : IDto
 {
     public InvoiceDto? InvoiceDto { get; set; }
     public List<InvoiceDetailDto>? InvoiceDetails { get; set; }
-    public MandantDetailDto? MandantDetailDto { get; set; }
-    public ReservationInvoiceReportDto? ReservationDto { get; set; }
+    // public MandantDetailDto? MandantDetailDto { get; set; }
+    // public ReservationInvoiceReportDto? ReservationDto { get; set; }
     public InvoiceAddressDto? InvoiceAddressDto { get; set; }
     public List<InvoiceTaxDto>? InvoiceTaxDtos { get; set; }
     public List<InvoicePaymentDto>? InvoicePaymentDtos { get; set; }

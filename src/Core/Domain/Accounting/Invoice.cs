@@ -51,7 +51,7 @@ public class Invoice : AuditableEntity<int>, IAggregateRoot
     public int? State { get; set; }
     public decimal InvoiceTotal { get; set; }
     public decimal InvoiceTotalNet { get; set; }
-    [StringLength(200)]
+    [StringLength(500)]
     public string? InvoiceTaxesJson { get; set; } // JSON Format
     [StringLength(1000)]
     public string? InvoicePaymentsJson { get; set; } // JSON Format

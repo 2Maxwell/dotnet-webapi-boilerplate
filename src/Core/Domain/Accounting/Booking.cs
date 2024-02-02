@@ -25,18 +25,20 @@ public class Booking : AuditableEntity<int>, IAggregateRoot
     [Required]
     [StringLength(100)]
     public string Source { get; set; } // Vorgang Cashier, NightAudit, Depositzahlung, ... ; PackageKz = P:Kz
-    public int? BookingLineNumberId { get; set; } // Id für zusammengehörige Zeilen
+    [StringLength(30)]
+    public string? BookingLineNumberId { get; set; } // Id für zusammengehörige Zeilen
     [Required]
     public int TaxId { get; set; } // kommt von Item Datumsabhängig
     [Required]
     public decimal TaxRate { get; set; }
     public int InvoicePos { get; set; }
-    public int State { get; set; }
+    public int State { get; set; } // 1 = booked, 9 = storno
     public int? InvoiceId { get; set; }
-    public int? ReferenceId { get; set; } // keine Ahnung was ich damit machen soll
+    [StringLength(100)]
+    public string? ReferenceId { get; set; } // Bei SplitPrice, SplitAmount die ursprüngliche BookingId hier eintragen: SplitAmount #12345 oder SplitPrice # 12345   
     public int? KasseId { get; set; }
 
-    public Booking(int mandantId, DateTime bookingDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, int? bookingLineNumberId, int taxId, decimal taxRate, int invoicePos, int state, int? invoiceId, int? referenceId, int? kasseId)
+    public Booking(int mandantId, DateTime bookingDate, DateTime hotelDate, int? reservationId, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string source, string? bookingLineNumberId, int taxId, decimal taxRate, int invoicePos, int state, int? invoiceId, string? referenceId, int? kasseId)
     {
         MandantId = mandantId;
         BookingDate = bookingDate;

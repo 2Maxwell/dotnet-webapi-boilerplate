@@ -1,12 +1,6 @@
 ﻿using FSH.WebApi.Application.Accounting.Bookings;
-using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Infrastructure.Bookings;
 public class BookingService : IBookingService
@@ -31,7 +25,7 @@ public class BookingService : IBookingService
                ItemNumber = x.ItemNumber,
                HotelDate = x.HotelDate,
                Price = x.Price,
-               BookingLineNumberId = x.BookingLineNumberId ?? 0,
+               BookingLineNumberId = x.BookingLineNumberId,
                Source = x.Source
 
            }).ToListAsync();

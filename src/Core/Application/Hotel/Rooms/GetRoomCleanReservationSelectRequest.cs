@@ -35,8 +35,9 @@ public class GetRoomCleanReservationSelectRequestHandler : IRequestHandler<GetRo
         DateTime departure_1 = request.Departure.AddDays(-1);
 
         string sqlClean = $"SELECT * FROM lnx.Room WHERE " +
-            $"NOT EXISTS (SELECT RoomId FROM lnx.RoomReservation WHERE Id = RoomId " +
-            $"AND Occupied BETWEEN '{request.Arrival}' AND '{departure_1.Date}') AND (CategoryId = {request.CategoryId}) " +
+            $"NOT EXISTS (SELECT RoomId FROM lnx.RoomReservation WHERE Id = RoomId AND Occupied BETWEEN '{request.Arrival}' AND '{departure_1.Date}') " +
+            $"AND (MandantId = {request.MandantId}) " +
+            $"AND (CategoryId = {request.CategoryId}) " +
             $"AND (Clean = 1 AND " +
             $"((Blocked = 0) OR " +
             $"(Blocked = 1 AND BlockedEnd <= '{request.Arrival}') OR " +
@@ -46,7 +47,7 @@ public class GetRoomCleanReservationSelectRequestHandler : IRequestHandler<GetRo
 
         string sqlCleanDirty = $"SELECT * FROM lnx.Room WHERE " +
             $"NOT EXISTS (SELECT RoomId FROM lnx.RoomReservation WHERE Id = RoomId " +
-            $"AND Occupied BETWEEN '{request.Arrival}' AND '{departure_1.Date}') AND (CategoryId = {request.CategoryId}) AND " +
+            $"AND Occupied BETWEEN '{request.Arrival}' AND '{departure_1.Date}') AND (MandantId = {request.MandantId}) AND (CategoryId = {request.CategoryId}) AND " +
             $"((Blocked = 0) OR " +
             $"(Blocked = 1 AND BlockedEnd <= '{request.Arrival}') OR " +
             $"(Blocked = 1 AND BlockedStart >= '{request.Departure}'))";

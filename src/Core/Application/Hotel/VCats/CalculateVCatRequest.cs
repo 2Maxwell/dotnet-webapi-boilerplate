@@ -21,14 +21,14 @@ public class CalculateVCatRequest : IRequest<int>
 public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest, int>
 {
     private readonly IRepository<VCat> _repository;
-    private readonly IReadRepository<Mandant> _repositoryMandant;
-    private readonly IReadRepository<MandantSetting> _repositoryMandantSetting;
+    private readonly IRepository<Mandant> _repositoryMandant;
+    private readonly IRepository<MandantSetting> _repositoryMandantSetting;
     private readonly IReadRepository<Category> _categoryRepository;
-    private readonly IReadRepository<Room> _roomRepository;
-    private readonly IReadRepository<Reservation> _reservationRepository;
+    private readonly IRepository<Room> _roomRepository;
+    private readonly IRepository<Reservation> _reservationRepository;
     private readonly IDapperRepository _dapperRepository;
 
-    public CalculateVCatRequestHandler(IRepository<VCat> repository, IReadRepository<Mandant> repositoryMandant, IReadRepository<MandantSetting> repositoryMandantSetting, IReadRepository<Category> categoryRepository, IReadRepository<Room> roomRepository, IReadRepository<Reservation> reservationRepository, IDapperRepository dapperRepository)
+    public CalculateVCatRequestHandler(IRepository<VCat> repository, IRepository<Mandant> repositoryMandant, IRepository<MandantSetting> repositoryMandantSetting, IReadRepository<Category> categoryRepository, IRepository<Room> roomRepository, IRepository<Reservation> reservationRepository, IDapperRepository dapperRepository)
     {
         _repository = repository;
         _repositoryMandant = repositoryMandant;
@@ -60,7 +60,7 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
         int counter = 0;
 
         // für alle Categorys und alle Tage die VCat laden oder neu erzeugen
-        foreach (Category category in categories.Where(x => !x.CategoryIsVirtual))
+        foreach (Category category in categories.Where(x => x.VkatRelevant && !x.CategoryIsVirtual))
         {
             for (int i = 0; i < vcatDays; i++)
             {
@@ -86,7 +86,6 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     || (!x.Blocked && ((x.BlockedStart <= workDate && x.BlockedEnd > workDate) || (x.BlockedStart == null && x.BlockedEnd > workDate) || (x.BlockedStart <= workDate && x.BlockedEnd == null)))))
                     .Sum(x => x.Beds);
 
-
                     // alle BedsExtra in Rooms zählen die zur Category gehören und in ExtraBedsInventory eintragen
                     // vCat.ExtraBedsInventory = rooms.Where(x => x.CategoryId == category.Id).Sum(x => x.BedsExtra);
 
@@ -96,7 +95,6 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     && !((x.Blocked && ((x.BlockedStart <= workDate && x.BlockedEnd > workDate) || (x.BlockedStart == null && x.BlockedEnd > workDate) || (x.BlockedStart <= workDate && x.BlockedEnd == null) || (x.BlockedStart == null && x.BlockedEnd == null)))
                     || (!x.Blocked && ((x.BlockedStart <= workDate && x.BlockedEnd > workDate) || (x.BlockedStart == null && x.BlockedEnd > workDate) || (x.BlockedStart <= workDate && x.BlockedEnd == null)))))
                     .Sum(x => x.BedsExtra);
-
 
                     // alle Rooms zählen die zur Category gehören und die am Tag Blocked sind
                     // vCat.Blocked = rooms.Where(x => x.CategoryId == category.Id && x.Blocked && x.BlockedStart <= workDate && x.BlockedEnd > workDate).Count();
@@ -113,19 +111,19 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     // alle Reservations zählen die zur Category gehören und die am Tag ankommen
                     // vCat.Arrival = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndArrivalSpec(request.MandantId, category.Id, workDate), cancellationToken);
 
-                    string sqlArrival = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND (Arrival >= Convert(DATE, '{workDate}') AND Arrival < Convert(DATE, '{workDate.AddDays(1)}'))  AND ResKz <> 'S'";
+                    string sqlArrival = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND (Arrival >= Convert(DATE, '{workDate}') AND Arrival < Convert(DATE, '{workDate.AddDays(1)}'))  AND ResKz <> 'S' AND (RoomNumber is null OR RoomNumber NOT LIKE 'PZ%')";
                     vCat.Arrival = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlArrival, cancellationToken);
 
                     // alle Reservations zählen die zur Category gehören und die am Tag abreisen
                     // vCat.Departure = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndDepartureSpec(request.MandantId, category.Id, workDate), cancellationToken);
 
-                    string sqlDeparture = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND (Departure >= Convert(DATE, '{workDate}') AND Departure < Convert(DATE, '{workDate.AddDays(1)}')) AND ResKz <> 'S'";
+                    string sqlDeparture = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND (Departure >= Convert(DATE, '{workDate}') AND Departure < Convert(DATE, '{workDate.AddDays(1)}')) AND ResKz <> 'S' AND (RoomNumber is null OR RoomNumber NOT LIKE 'PZ%')";
                     vCat.Departure = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlDeparture, cancellationToken);
 
                     // alle Reservations zählen die zur Category gehören und die am Tag bleiben
                     // vCat.Stay = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndStaySpec(request.MandantId, category.Id, workDate), cancellationToken);
 
-                    string sqlStay = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Arrival < Convert(DATE, '{workDate}') AND Departure >= Convert(DATE, '{workDate.AddDays(1)}') AND ResKz <> 'S'";
+                    string sqlStay = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Arrival < Convert(DATE, '{workDate}') AND Departure >= Convert(DATE, '{workDate.AddDays(1)}') AND ResKz <> 'S' AND (RoomNumber is null OR RoomNumber NOT LIKE 'PZ%')";
                     vCat.Stay = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlStay, cancellationToken);
 
                     // alle Reservations die zur Category gehören und die an dem Tag anreise oder im Haus sind den PaxString laden
@@ -139,6 +137,8 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     // alle Reservations in reservationsArrival den PaxString laden und auswerten
                     foreach (Reservation r in reservationsArrival)
                     {
+                        if (!string.IsNullOrEmpty(r.RoomNumber) && r.RoomNumber.StartsWith("PZ")) continue;
+
                         Pax pax = JsonSerializer.Deserialize<Pax>(r.PaxString);
                         vCat.Adult += (pax.Adult * (int)r.RoomAmount);
                         vCat.Child += (pax.Children.Count() * (int)r.RoomAmount);
@@ -183,19 +183,19 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     // alle Reservations zählen die zur Category gehören und die am Tag ankommen
                     // vCatNew.Arrival = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndArrivalSpec(request.MandantId, category.Id, workDate), cancellationToken); // TODO * RoomAmount
 
-                    string sqlArrival = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND Arrival = '{workDate.Date}' AND ResKz<> 'S'";
+                    string sqlArrival = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND Arrival = '{workDate.Date}' AND ResKz <> 'S' AND RoomNumber NOT LIKE 'PZ%'";
                     vCatNew.Arrival = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlArrival, cancellationToken);
 
                     // alle Reservations zählen die zur Category gehören und die am Tag abreisen
                     // vCatNew.Departure = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndDepartureSpec(request.MandantId, category.Id, workDate), cancellationToken); // TODO * RoomAmount
 
-                    string sqlDeparture = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Departure = Convert(DATE, '{workDate}') AND ResKz <> 'S'";
+                    string sqlDeparture = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Departure = Convert(DATE, '{workDate}') AND ResKz <> 'S' AND RoomNumber NOT LIKE 'PZ%'";
                     vCatNew.Departure = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlDeparture, cancellationToken);
 
                     // alle Reservations zählen die zur Category gehören und die am Tag bleiben
                     // vCatNew.Stay = await _reservationRepository.CountAsync(new ReservationsByMandantIdAndCategoryIdAndStaySpec(request.MandantId, category.Id, workDate), cancellationToken); // TODO * RoomAmount
 
-                    string sqlStay = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Arrival <= Convert(DATE, '{workDate}') AND Departure > Convert(DATE, '{workDate}') AND ResKz <> 'S'";
+                    string sqlStay = $"SELECT SUM(RoomAmount) FROM lnx.Reservation WHERE MandantId = {request.MandantId} AND CategoryId = {category.Id} AND Arrival <= Convert(DATE, '{workDate}') AND Departure > Convert(DATE, '{workDate}') AND ResKz <> 'S' AND RoomNumber NOT LIKE 'PZ%'";
                     vCatNew.Stay = await _dapperRepository.QueryExecuteScalarAsync<int>(sqlStay, cancellationToken);
 
 
@@ -205,6 +205,8 @@ public class CalculateVCatRequestHandler : IRequestHandler<CalculateVCatRequest,
                     // alle Reservations in reservationsArrival den PaxString laden und auswerten
                     foreach (Reservation r in reservationsArrival)
                     {
+                        if (!string.IsNullOrEmpty(r.RoomNumber) && r.RoomNumber.StartsWith("PZ")) continue;
+
                         Pax pax = JsonSerializer.Deserialize<Pax>(r.PaxString);
                         vCatNew.Adult += (pax.Adult * (int)r.RoomAmount);
                         vCatNew.Child += (pax.Children.Count() * (int)r.RoomAmount);

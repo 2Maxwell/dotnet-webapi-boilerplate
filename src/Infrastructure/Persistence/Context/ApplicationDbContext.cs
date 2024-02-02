@@ -3,8 +3,10 @@ using FSH.WebApi.Application.Accounting;
 using FSH.WebApi.Application.Common.Events;
 using FSH.WebApi.Application.Common.Interfaces;
 using FSH.WebApi.Domain.Accounting;
+using FSH.WebApi.Domain.Boards;
 using FSH.WebApi.Domain.Catalog;
 using FSH.WebApi.Domain.Environment;
+using FSH.WebApi.Domain.General;
 using FSH.WebApi.Domain.Helper;
 using FSH.WebApi.Domain.Hotel;
 using FSH.WebApi.Infrastructure.Persistence.Configuration;
@@ -62,7 +64,18 @@ public class ApplicationDbContext : BaseDbContext
     public DbSet<MandantDetail> MandantDetail => Set<MandantDetail>();
     public DbSet<Invoice> Invoice => Set<Invoice>();
     public DbSet<InvoiceDetail> InvoiceDetail => Set<InvoiceDetail>();
-
+    public DbSet<CashierRegister> CashierRegister => Set<CashierRegister>();
+    public DbSet<CashierJournal> CashierJournal => Set<CashierJournal>();
+    public DbSet<Appointment> Appointment => Set<Appointment>();
+    public DbSet<Board> Board => Set<Board>();
+    public DbSet<BoardItemLabel> BoardItemLabel => Set<BoardItemLabel>();
+    public DbSet<BoardCollection> BoardCollection => Set<BoardCollection>();
+    public DbSet<BoardItemAttachment> BoardItemAttachment => Set<BoardItemAttachment>();
+    public DbSet<BoardItemSub> BoardItemSub => Set<BoardItemSub>();
+    public DbSet<BoardItem> BoardItem => Set<BoardItem>();
+    public DbSet<BoardItemTagGroup> BoardItemTagGroup => Set<BoardItemTagGroup>();
+    public DbSet<BoardItemTag> BoardItemTag => Set<BoardItemTag>();
+    public DbSet<BoardItemLabelGroup> BoardItemLabelGroup => Set<BoardItemLabelGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

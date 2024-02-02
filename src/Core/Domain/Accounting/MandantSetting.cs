@@ -12,6 +12,7 @@ public class MandantSetting : AuditableEntity<int>, IAggregateRoot
     public int DefaultLanguageId { get; set; }
     public int DefaultCountryId { get; set; }
     public int DefaultGuestId { get; set; }
+    public int TaxCountryId { get; set; }
 
     public MandantSetting(int mandantId, int forecastDays, string? defaultTransfer, DateTime defaultArrivalTime, DateTime defaultDepartureTime, int defaultLanguageId, int defaultCountryId, int defaultGuestId)
     {

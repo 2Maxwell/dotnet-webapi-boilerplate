@@ -4,12 +4,19 @@ using FSH.WebApi.Domain.Accounting;
 namespace FSH.WebApi.Application.Accounting.Bookings;
 public class CreateBookingBulkRequest : IRequest<bool>
 {
+    public CreateBookingBulkRequest(List<CreateBookingRequest>? createBookingRequestList, int mandantId)
+    {
+        CreateBookingRequestList = createBookingRequestList;
+        MandantId = mandantId;
+    }
+
     // Diese Request kann nur für Buchung auf Konten Gast im Haus genutzt werden.
     // Bei Buchungen die eine Rechnung zur Folge haben muss der RückgabeTyp
     // List<Booking> sein. Dann kann die Rechnung erstellt werden und die Buchungen
     // sind mit der Id gekennzeichnet.
 
     public List<CreateBookingRequest>? CreateBookingRequestList { get; set; }
+    public int MandantId { get; set; }
 }
 
 public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulkRequest, bool>
@@ -17,39 +24,40 @@ public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulk
     private readonly IRepository<Booking> _repository;
     private readonly IRepository<Journal> _journalRepository;
     private readonly IRepository<MandantNumbers> _mandantNumbersRepository;
+    private readonly IRepository<CashierJournal> _cashierJournalRepository;
 
-    public CreateBookingBulkRequestHandler(IRepository<Booking> repository, IRepository<Journal> journalRepository, IRepository<MandantNumbers> mandantNumbersRepository)
+    public CreateBookingBulkRequestHandler(IRepository<Booking> repository, IRepository<Journal> journalRepository, IRepository<MandantNumbers> mandantNumbersRepository, IRepository<CashierJournal> cashierJournalRepository)
     {
         _repository = repository;
         _journalRepository = journalRepository;
         _mandantNumbersRepository = mandantNumbersRepository;
+        _cashierJournalRepository = cashierJournalRepository;
     }
 
     public async Task<bool> Handle(CreateBookingBulkRequest request, CancellationToken cancellationToken)
     {
-        GetMandantNumberRequest mNumberRequest = new(request.CreateBookingRequestList[0].MandantId, "Journal");
+        GetMandantNumberRequest mNumberRequest = new(request.MandantId, "Journal");
         GetMandantNumberRequestHandler getMandantNumberRequestHandler = new(_mandantNumbersRepository);
-
 
         foreach (var bookingRequest in request.CreateBookingRequestList!)
         {
             var booking = new Booking(
-                bookingRequest.MandantId,
+                request.MandantId,
                 DateTime.Now,
                 bookingRequest.HotelDate,
                 bookingRequest.ReservationId,
                 bookingRequest.Name!,
                 bookingRequest.Amount,
-                bookingRequest.Price,
+                Math.Round(bookingRequest.Price, 2), // Price,
                 bookingRequest.Debit,
                 bookingRequest.ItemId,
                 bookingRequest.ItemNumber,
                 bookingRequest.Source!,
-                bookingRequest.BookingLineNumberId == 0 ? null : bookingRequest.BookingLineNumberId,
+                bookingRequest.BookingLineNumberId,
                 bookingRequest.TaxId,
                 bookingRequest.TaxRate,
                 bookingRequest.InvoicePos,
-                1, // State
+                bookingRequest.State, // 1, // State
                 null, // InvoiceId
                 bookingRequest.ReferenceId,
                 bookingRequest.KasseId);
@@ -79,7 +87,7 @@ public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulk
 
             await _journalRepository.AddAsync(journal, cancellationToken);
 
-            if (bookingRequest.ItemNumber >= 9000)
+            if (bookingRequest.ItemNumber >= 8999)
             {
                 var cashierJournal = new CashierJournal(
                     booking.MandantId,
@@ -97,9 +105,11 @@ public class CreateBookingBulkRequestHandler : IRequestHandler<CreateBookingBulk
                     journal.ItemId,
                     journal.ItemNumber,
                     journal.Source,
-                    1, // State
+                    journal.State, // 1, // State 1 = offen, wird bei Create eingetragen
+                    DateTime.Now,
                     journal.KasseId);
 
+                await _cashierJournalRepository.AddAsync(cashierJournal, cancellationToken);
             }
 
             // TODO: Wenn ItemNumber >= 9000 dann Buchung in CashierJournal eintragen

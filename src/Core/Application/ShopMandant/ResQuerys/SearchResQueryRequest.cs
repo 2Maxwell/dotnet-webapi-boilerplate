@@ -95,7 +95,7 @@ public class SearchMandantResQueryRequestHandler : IRequestHandler<SearchMandant
                    (ISpecification<ItemPriceTax, ItemPriceTaxDto>)new ItemPriceTaxByItemIdSpec(item.Id), cancellationToken);
         }
 
-        var taxesSpec = new TaxesByCountryIdSpec(49);
+        var taxesSpec = new TaxesByCountryIdSpec(80);
         List<TaxDto> TaxesList = await _repositoryTax.ListAsync(taxesSpec, cancellationToken);
 
         // ZUM TESTEN
@@ -183,7 +183,7 @@ public class SearchMandantResQueryRequestHandler : IRequestHandler<SearchMandant
                         packageExecution.children = request.RoomOccupancy[0].Children;
                         packageExecution.amountBreakfast = 1;
                         packageExecution.packageAmount = 0;
-                        packageExecution.bookingLineNumber = int.Parse(i.ToString("yyyyMMdd"));
+                        packageExecution.bookingLineNumber = packageExtendedDto.PackageDto.Kz + i.ToString("yyyyMMddHHmmssfff");
                         packageExecution.itemsList = ItemsList;
                         packageExecution.taxesList = TaxesList;
 

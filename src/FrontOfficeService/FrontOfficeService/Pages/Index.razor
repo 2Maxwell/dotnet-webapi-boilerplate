@@ -1,0 +1,70 @@
+﻿@page "/"
+
+<style>
+    body {
+
+        background-image: url('/Images/OIG.jpg'); /* Hintergrundbild der Hotellobby */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-color: darkgray; /* Fallback-Hintergrundfarbe */
+    }
+
+    .container {
+        height: 100vh; /* Volle Bildschirmhöhe */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn {
+        width: 180px; /* Breite der Buttons */
+        height: 180px; /* Höhe der Buttons */
+        margin: 10px;
+        background-color: rgba(255, 165, 0, 0.7); /* Transparente Hintergrundfarbe der Buttons (Orange mit 70% Deckkraft) */
+        display: flex;
+        flex-direction: column; /* Button-Inhalte werden in einer Spalte angezeigt */
+        justify-content: center;
+        align-items: center;
+        font-size: 25px; /* Schriftgröße anpassen */
+    }
+
+        .btn i {
+            margin-top: 10px; /* Abstand zwischen Text und Icon */
+            font-size: 48px; /* Schriftgröße für die Icons (doppelt so groß wie der Text) */
+        }
+
+    }</style>
+
+<div class="container">
+    <h1 class="text-white" style="font-size: 40px;">Lunnax Atlas</h1> <!-- größer schreiben durch hinzufügen von style -->
+    <div class="btn-group">
+
+            <a href="https://atlasclient.adlia.de" target="_blank" class="btn btn-primary">
+            Lunnax Atlas
+            <i class="fa fa-map"></i> <!-- Beispiel-Icon, du kannst ein beliebiges Font Awesome Icon verwenden -->
+        </a>
+        <a href="#" class="btn btn-primary">
+            Housekeeping
+            <i class="fa fa-home"></i> <!-- Beispiel-Icon, du kannst ein beliebiges Font Awesome Icon verwenden -->
+        </a>
+    </div>
+
+    <div class="btn-group mt-n10" style="margin-top: -10px;">
+            <a href="#" class="btn btn-primary">
+                Presentation
+                <i class="fa fa-laptop"></i> <!-- Beispiel-Icon, du kannst ein beliebiges Font Awesome Icon verwenden -->
+            </a>
+            <a href="#" class="btn btn-primary">
+                GastService
+                <i class="fa fa-users"></i> <!-- Beispiel-Icon, du kannst ein beliebiges Font Awesome Icon verwenden -->
+            </a>
+        </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<PageTitle>Index</PageTitle>
+

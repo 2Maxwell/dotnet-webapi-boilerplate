@@ -50,7 +50,7 @@ public class PackageExtendedCalculationRequestHandler : IRequestHandler<PackageE
         }
 
 
-        var taxesSpec = new TaxesByCountryIdSpec(49);
+        var taxesSpec = new TaxesByCountryIdSpec(80);
         List<TaxDto> TaxesList = await _repositoryTax.ListAsync(taxesSpec, cancellationToken);
 
         foreach (PackageExtendDto packageExtendDto in request.packageExtendDtos)
@@ -71,7 +71,7 @@ public class PackageExtendedCalculationRequestHandler : IRequestHandler<PackageE
                 packageExecution.children = request.pax.Children!;
                 packageExecution.amountBreakfast = 1;
                 packageExecution.packageAmount = packageExtendDto.Amount;
-                packageExecution.bookingLineNumber = int.Parse(i.ToString("yyyyMMdd"));
+                packageExecution.bookingLineNumber = packageExtendDto.PackageDto.Kz + i.ToString("yyyyMMddHHmmssfff");
                 packageExecution.itemsList = ItemsList;
                 packageExecution.taxesList = TaxesList;
 

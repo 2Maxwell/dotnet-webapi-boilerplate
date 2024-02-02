@@ -18,15 +18,15 @@ public class CategoryByIsVirtualSpec : Specification<Category, CategorySelectDto
     {
         if (selector < 0)
         {
-            Query.Where(p => !p.CategoryIsVirtual && p.MandantId == mandantId);
+            Query.Where(p => !p.CategoryIsVirtual && p.MandantId == mandantId && p.VkatRelevant);
         }
         else if (selector == 0)
         {
-            Query.Where(p => p.MandantId == mandantId);
+            Query.Where(p => p.MandantId == mandantId && p.VkatRelevant);
         }
         else
         {
-            Query.Where(p => p.CategoryIsVirtual && p.MandantId == mandantId);
+            Query.Where(p => p.CategoryIsVirtual && p.MandantId == mandantId && p.VkatRelevant);
         }
     }
 }

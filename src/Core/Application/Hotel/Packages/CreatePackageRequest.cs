@@ -23,6 +23,10 @@ public class CreatePackageRequest : IRequest<int>
     public bool ShopExtern { get; set; }
     public string? ChipIcon { get; set; }
     public string? ChipText { get; set; }
+    public int? DurationUnitEnumId { get; set; }
+    public int? Duration { get; set; }
+    public int? AppointmentTargetEnum { get; set; }
+
     public List<PackageItemDto>? PackageItems { get; set; } = new();
 }
 
@@ -106,7 +110,10 @@ public class CreatePackageRequestHandler : IRequestHandler<CreatePackageRequest,
             request.Optional,
             request.ShopExtern,
             request.ChipIcon,
-            request.ChipText);
+            request.ChipText,
+            request.DurationUnitEnumId,
+            request.Duration,
+            request.AppointmentTargetEnum);
 
         package.DomainEvents.Add(EntityCreatedEvent.WithEntity(package));
         await _repository.AddAsync(package, cancellationToken);

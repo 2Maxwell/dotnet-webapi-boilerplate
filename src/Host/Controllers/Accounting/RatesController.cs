@@ -1,5 +1,4 @@
 ﻿using FSH.WebApi.Application.Accounting.Rates;
-using FSH.WebApi.Application.Hotel.Categorys;
 
 namespace FSH.WebApi.Host.Controllers.Accounting;
 public class RatesController : VersionedApiController

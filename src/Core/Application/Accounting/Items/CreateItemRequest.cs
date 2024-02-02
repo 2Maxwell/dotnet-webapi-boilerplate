@@ -34,12 +34,12 @@ public class CreateItemRequestHandler : IRequestHandler<CreateItemRequest, int>
         item.DomainEvents.Add(EntityCreatedEvent.WithEntity(item));
         await _repository.AddAsync(item, cancellationToken);
 
-        foreach (ItemPriceTaxDto ptItem in request.PriceTaxesDto!)
-        {
-            ItemPriceTax pt = new ItemPriceTax(request.MandantId, item.Id, ptItem.Price, ptItem.TaxId, ptItem.Start, ptItem.End);
-            pt.DomainEvents.Add(EntityCreatedEvent.WithEntity(pt));
-            await _priceTaxRepository.AddAsync(pt, cancellationToken);
-        }
+        //foreach (ItemPriceTaxDto ptItem in request.PriceTaxesDto!)
+        //{
+        //    ItemPriceTax pt = new ItemPriceTax(request.MandantId, item.Id, ptItem.Price, ptItem.TaxId, ptItem.Start, ptItem.End);
+        //    pt.DomainEvents.Add(EntityCreatedEvent.WithEntity(pt));
+        //    await _priceTaxRepository.AddAsync(pt, cancellationToken);
+        //}
 
         return item.Id;
     }

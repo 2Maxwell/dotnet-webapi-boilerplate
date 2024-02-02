@@ -5,11 +5,12 @@ using FSH.WebApi.Application.Hotel.Rooms;
 using FSH.WebApi.Application.Hotel.VCats;
 using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Common.Events;
-using FSH.WebApi.Domain.Environment;
+using FSH.WebApi.Domain.Enums;
+using FSH.WebApi.Domain.General;
+using FSH.WebApi.Domain.Helper;
 using FSH.WebApi.Domain.Hotel;
 using FSH.WebApi.Domain.Shop;
 using Mapster;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace FSH.WebApi.Application.Hotel.Reservations;
@@ -85,22 +86,26 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
     private readonly IStringLocalizer<UpdateReservationRequestHandler> _localizer;
     private readonly IRepository<PriceTag> _repositoryPriceTag;
     private readonly IRepository<PriceTagDetail> _repositoryPriceTagDetail;
+    private readonly IRepository<PackageExtend> _repositoryPackageExtend;
     private readonly IRepository<VCat> _repositoryVCat;
     private readonly IRepository<Category> _repositoryCategory;
     private readonly IRepository<RoomReservation> _repositoryRoomReservation;
     private readonly IRepository<Mandant> _repositoryMandant;
+    private readonly IRepository<Appointment> _repositoryAppointment;
     private readonly IRepositoryWithEvents<Room> _repositoryRoom;
 
-    public UpdateReservationRequestHandler(IRepository<Reservation> repository, IStringLocalizer<UpdateReservationRequestHandler> localizer, IRepository<PriceTag> repositoryPriceTag, IRepository<PriceTagDetail> repositoryPriceTagDetail, IRepository<VCat> repositoryVCat, IRepository<Category> repositoryCategory, IRepository<RoomReservation> repositoryRoomReservation, IRepository<Mandant> repositoryMandant, IRepositoryWithEvents<Room> repositoryRoom)
+    public UpdateReservationRequestHandler(IRepository<Reservation> repository, IStringLocalizer<UpdateReservationRequestHandler> localizer, IRepository<PriceTag> repositoryPriceTag, IRepository<PriceTagDetail> repositoryPriceTagDetail, IRepository<PackageExtend> repositoryPackageExtend, IRepository<VCat> repositoryVCat, IRepository<Category> repositoryCategory, IRepository<RoomReservation> repositoryRoomReservation, IRepository<Mandant> repositoryMandant, IRepository<Appointment> repositoryAppointment, IRepositoryWithEvents<Room> repositoryRoom)
     {
         _repository = repository;
         _localizer = localizer;
         _repositoryPriceTag = repositoryPriceTag;
         _repositoryPriceTagDetail = repositoryPriceTagDetail;
+        _repositoryPackageExtend = repositoryPackageExtend;
         _repositoryVCat = repositoryVCat;
         _repositoryCategory = repositoryCategory;
         _repositoryRoomReservation = repositoryRoomReservation;
         _repositoryMandant = repositoryMandant;
+        _repositoryAppointment = repositoryAppointment;
         _repositoryRoom = repositoryRoom;
     }
 
@@ -323,7 +328,7 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
         {
             #region VKat Calculation RollInReservation
 
-            if (updatedReservation.ResKz != "S") // S = Storno darf nicht mit RoolBack berechnet werden
+            if (updatedReservation.ResKz != "S" | (updatedReservation.RoomNumber != null && updatedReservation.RoomNumber!.StartsWith("PZ"))) // S = Storno darf nicht mit RoolBack berechnet werden
             {
                 Pax pax = JsonSerializer.Deserialize<Pax>(reservation.PaxString);
 
@@ -386,7 +391,7 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
 
             // RoomState setzen
             // Wenn Reservation.RoomId > 0 & Reservation.Arrival = Mandant.Hoteldate RoomState = ArrExp true
-            if (reservation.RoomNumberId > 0 && reservation.Arrival.Date == mandant.HotelDate)
+            if (reservation.RoomNumberId > 0 && reservation.Arrival.Date == mandant!.HotelDate)
             {
                 SetRoomStateArrivalExpectedRequest setRoomStateArrivalExpectedRequest = new SetRoomStateArrivalExpectedRequest()
                 {
@@ -394,8 +399,8 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
                     MandantId = reservation.MandantId
                 };
 
-                SetRoomStateArrivalExpectedRequestHandler setRoomStateArrivalExpectedHandler = new (_repositoryRoom);
-                var roomId = await setRoomStateArrivalExpectedHandler.Handle(setRoomStateArrivalExpectedRequest, cancellationToken);
+                SetRoomStateArrivalExpectedRequestHandler setRoomStateArrivalExpectedHandler = new(_repositoryRoom);
+                int roomId = await setRoomStateArrivalExpectedHandler.Handle(setRoomStateArrivalExpectedRequest, cancellationToken);
             }
 
             if (updateCase.Contains("_C") && reservation.RoomNumberId > 0)
@@ -407,8 +412,8 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
                     MandantId = reservation.MandantId
                 };
 
-                SetRoomStateCheckInRequestHandler setRoomStateCheckInHandler = new (_repositoryRoom);
-                var roomId = await setRoomStateCheckInHandler.Handle(setRoomStateCheckInRequest, cancellationToken);
+                SetRoomStateCheckInRequestHandler setRoomStateCheckInHandler = new(_repositoryRoom);
+                int roomId = await setRoomStateCheckInHandler.Handle(setRoomStateCheckInRequest, cancellationToken);
             }
 
             if (updateCase.Contains("_O"))
@@ -421,8 +426,8 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
                     MandantId = reservation.MandantId
                 };
 
-                SetRoomStateCheckOutRequestHandler setRoomStateCheckOutHandler = new (_repositoryRoom);
-                var roomId = await setRoomStateCheckOutHandler.Handle(setRoomStateCheckOutRequest, cancellationToken);
+                SetRoomStateCheckOutRequestHandler setRoomStateCheckOutHandler = new(_repositoryRoom);
+                int roomId = await setRoomStateCheckOutHandler.Handle(setRoomStateCheckOutRequest, cancellationToken);
 
                 // bool done = await _repositoryRoomState.SetCheckOutAsync(reservation.RoomNumberId, true, cancellationToken);
             }
@@ -527,6 +532,148 @@ public class UpdateReservationRequestHandler : IRequestHandler<UpdateReservation
         }
 
         #endregion
+
+        #region PackageExtend
+
+        PackageExtendOptionsByReservationSpec packageExtendOptionsByReservationSpec = new(request.MandantId, request.Id);
+        var packageExtendsDto = await _repositoryPackageExtend.ListAsync(packageExtendOptionsByReservationSpec, cancellationToken);
+
+        if (request.PackageExtendOptionDtos != null && request.PackageExtendOptionDtos.Count > 0)
+        {
+
+            foreach (PackageExtendDto peDto in request.PackageExtendOptionDtos)
+            {
+                Appointment tempAppointment = null;
+                // Wenn PackageExtendDto ein Appointment hat dann zuerst speichern oder Updaten
+                if (peDto.AppointmentDto != null)
+                {
+                    if (peDto.AppointmentDto.Id > 0)
+                    {
+                        // Appointment anhand der Id laden
+                        Appointment? appointment = await _repositoryAppointment.GetByIdAsync(peDto.AppointmentDto.Id, cancellationToken);
+                        if (appointment != null)
+                        {
+                            // Appointment ändern
+                            appointment.Update(
+                            peDto.AppointmentDto.Title,
+                            peDto.AppointmentDto.Start,
+                            peDto.AppointmentDto.End,
+                            peDto.AppointmentDto.DurationUnitEnumId,
+                            peDto.AppointmentDto.Duration,
+                            peDto.AppointmentDto.Remarks,
+                            peDto.AppointmentDto.Done,
+                            peDto.AppointmentDto.DoneDate
+                                                                                                                                                                                                                                                                                               );
+                            appointment.DomainEvents.Add(EntityUpdatedEvent.WithEntity(appointment));
+                            await _repositoryAppointment.UpdateAsync(appointment, cancellationToken);
+                            tempAppointment = appointment;
+                        }
+                    }
+                    else
+                    {
+                        // Create Appointment
+                        Appointment appointment = new(
+                                                        peDto.AppointmentDto.MandantId,
+                                                        peDto.AppointmentDto.Title,
+                                                        peDto.AppointmentDto.Start,
+                                                        peDto.AppointmentDto.End,
+                                                        peDto.AppointmentDto.DurationUnitEnumId,
+                                                        peDto.AppointmentDto.Duration,
+                                                        peDto.AppointmentDto.Source,
+                                                        peDto.AppointmentDto.SourceId,
+                                                        peDto.AppointmentDto.Remarks,
+                                                        peDto.AppointmentDto.AppointmentTargetEnumId,
+                                                        peDto.AppointmentDto.Done,
+                                                        peDto.AppointmentDto.DoneDate
+                                                                                                                                                                                                                                                                                                                                                                                           );
+                        // appointment.DomainEvents.Add(EntityCreatedEvent.WithEntity(appointment));
+                        await _repositoryAppointment.AddAsync(appointment, cancellationToken);
+                        tempAppointment = appointment;
+                    }
+                }
+
+                if (tempAppointment is not null)
+                {
+                    peDto.AppointmentDto.Id = tempAppointment.Id;
+                    peDto.AppointmentId = tempAppointment.Id;
+
+                }
+
+                if (peDto.Id > 0)
+                {
+                    // PackageExtend anhand der Id laden
+                    PackageExtend? packageExtend = await _repositoryPackageExtend.GetByIdAsync(peDto.Id, cancellationToken);
+                    if (packageExtend != null)
+                    {
+                        // PackageExtend ändern
+                        packageExtend.Update(
+                            peDto.ImagePath,
+                            peDto.Amount,
+                            peDto.Price,
+                            peDto.AppointmentId,
+                            peDto.AppointmentTargetEnum,
+                            peDto.PackageExtendedStateEnum
+                            );
+                        packageExtend.DomainEvents.Add(EntityUpdatedEvent.WithEntity(packageExtend));
+                        await _repositoryPackageExtend.UpdateAsync(packageExtend, cancellationToken);
+                    }
+
+                    if(tempAppointment is not null) tempAppointment.SourceId = packageExtend.Id;
+                    // List alle PackageExtend für diese Reservierung laden
+                    // alle noch vorhandenen PackageExtend ändern
+                    // alle nicht mehr vorhandenen PackageExtend löschen
+                }
+                else
+                {
+                    // Create PackageExtend
+                    PackageExtend packageExtend = new(
+                        request.MandantId,
+                        peDto.PackageDto.Id,
+                        peDto.ImagePath,
+                        peDto.Amount,
+                        peDto.Price,
+                        peDto.AppointmentId,
+                        peDto.AppointmentTargetEnum,
+                        PackageExtendedStateEnum.pending,
+                        PackageExtendSourceEnum.HotelReservation,
+                        reservation.Id
+                        );
+                    packageExtend.DomainEvents.Add(EntityCreatedEvent.WithEntity(packageExtend));
+                    await _repositoryPackageExtend.AddAsync(packageExtend, cancellationToken);
+
+                    if (tempAppointment is not null) tempAppointment.SourceId = packageExtend.Id;
+                }
+
+                if (tempAppointment is not null)
+                {
+                    await _repositoryAppointment.UpdateAsync(tempAppointment, cancellationToken);
+                }
+            }
+        }
+
+        if (packageExtendsDto != null && packageExtendsDto.Count > 0)
+        {
+            foreach (PackageExtendDto pe in packageExtendsDto)
+            {
+                if (request.PackageExtendOptionDtos != null && request.PackageExtendOptionDtos.Count > 0)
+                {
+                    var packageExtend = request.PackageExtendOptionDtos.Where(x => x.Id == pe.Id).FirstOrDefault();
+                    if (packageExtend == null)
+                    {
+                        // PackageExtend löschen
+                        await _repositoryPackageExtend.DeleteAsync(pe.Adapt<PackageExtend>(), cancellationToken);
+                    }
+                }
+                else
+                {
+                    // PackageExtend löschen
+                    await _repositoryPackageExtend.DeleteAsync(pe.Adapt<PackageExtend>(), cancellationToken);
+                }
+            }
+        }
+
+        #endregion
+
 
         return request.Id;
     }

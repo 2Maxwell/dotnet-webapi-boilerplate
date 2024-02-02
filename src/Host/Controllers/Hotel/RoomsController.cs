@@ -11,6 +11,15 @@ public class RoomsController : VersionedApiController
         return Mediator.Send(request);
     }
 
+    [HttpPost("searchRoomHousekeeping")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Search rooms for Housekeeping View using available filters.", "")]
+    public Task<List<RoomHousekeepingDto>> SearchRoomHousekeepingAsync(SearchRoomsHousekeepingRequest request)
+    {
+        return Mediator.Send(request);
+    }
+
+
     [HttpGet("{id:int}")]
     [MustHavePermission(FSHAction.View, FSHResource.Brands)]
     [OpenApiOperation("Get room details.", "")]

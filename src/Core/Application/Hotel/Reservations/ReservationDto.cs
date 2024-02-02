@@ -40,6 +40,7 @@ public class ReservationDto : IDto
     public string? CRSNumber { get; set; }
     public string? PaxString { get; set; } // um Pax zu erzeugen
     public Guid? CartId { get; set; }
+    public DateTime? BookingDone { get; set; }
     public string? Confirmations { get; set; }
     public string? Wishes { get; set; }
     public string? RemarksHelper { get; set; }

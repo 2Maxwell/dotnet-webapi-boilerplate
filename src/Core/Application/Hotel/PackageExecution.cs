@@ -23,7 +23,7 @@ public class PackageExecution
     public List<Child>? children { get; set; }
     public int amountBreakfast { get; set; }
     public decimal packageAmount { get; set; }
-    public int bookingLineNumber { get; set; }
+    public string? bookingLineNumber { get; set; }
     public List<ItemDto>? itemsList { get; set; }
     public List<TaxDto>? taxesList { get; set; }
 
@@ -37,7 +37,8 @@ public class PackageExecution
             {
                 case 100:
                     // 100 = daily
-                    if (arrival.Date <= dateCurrently.Date) value = true;
+                    // if (arrival.Date <= dateCurrently.Date)
+                    value = true;
                     break;
                 // TODO perHour, per45Minutes, per30Minutes, per15Minutes, perMinute
                 case 200:
@@ -52,8 +53,8 @@ public class PackageExecution
                     // 290 per Appointment
                     // wenn noch nicht Status = Booked dann wenn Departure morgen ist dann buchen.
                     if (packageExtendedDto!.PackageExtendedStateEnum == PackageExtendedStateEnum.cartItem) value = true;
-                    else if (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.pending && departure.Date == dateCurrently.AddDays(1)) value = true;
-                    else if (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.reserved && Convert.ToDateTime(packageExtendedDto.Appointment).Date == dateCurrently.Date) value = true;
+                    else if ((packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.pending) || (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.reserved) && departure.Date == dateCurrently.AddDays(1)) value = true;
+                    //else if (packageExtendedDto.PackageExtendedStateEnum == PackageExtendedStateEnum.reserved && Convert.ToDateTime(packageExtendedDto.Appointment).Date == dateCurrently.Date) value = true;
                     break;
                 case 291:
                     // TODO 291 NumberPrice
@@ -161,8 +162,8 @@ public class PackageExecution
                         // bl.ItemName = ItemTaxList.Where(x => x.Id == item.ItemId).Select(x => x.Name).FirstOrDefault();
                         bl.ItemName = itDto.Name;
                         bl.Amount = roomAmount;
+                        bl.Debit = bl.ItemNumber < 9000 ? true : false;
 
-                        // bl.TaxId = item.TaxId;
                         // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
                         bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
                         // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
@@ -192,12 +193,13 @@ public class PackageExecution
                         bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                         bl.ItemName = itDto.Name;
                         bl.Amount = adults;
+                            bl.Debit = bl.ItemNumber < 9000 ? true : false;
 
                             // bl.TaxId = item.TaxId;
                             // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
                             bl.TaxId = itDto.PriceTaxesDto.Where(ti => ti.Start <= dateCurrently && ti.End >= dateCurrently).Select(ti => ti.TaxId).FirstOrDefault();
-                            // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
-                            TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
+                        // bl.TaxId = itDto.TaxId;  //itDto.Taxes.FirstOrDefault().TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.Id).FirstOrDefault();
+                        TaxDto? taxDto = taxesList.Where(x => x.Id == bl.TaxId).FirstOrDefault();
                         bl.TaxRate = taxDto.TaxItems.Where(ti => ti.Start <= arrival && ti.End >= departure).Select(ti => ti.TaxRate).FirstOrDefault();
                         bl.Price = item.Price != 0 ? item.Price : calculatePackageItemFormula(item);
                         bl.BookingLineNumberId = bookingLineNumber;
@@ -223,6 +225,8 @@ public class PackageExecution
                         bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                         bl.ItemName = itDto.Name;
                         bl.Amount = children.Count;
+                        bl.Debit = bl.ItemNumber < 9000 ? true : false;
+
 
                         // bl.TaxId = item.TaxId;
                         // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
@@ -251,6 +255,8 @@ public class PackageExecution
                         bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                         bl.ItemName = itDto.Name;
                         bl.Amount = children.Where(x => x.Age >= 5 && x.Age <= 15).Count();
+                        bl.Debit = bl.ItemNumber < 9000 ? true : false;
+
 
                         // bl.TaxId = item.TaxId;
                         // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
@@ -279,6 +285,8 @@ public class PackageExecution
                         bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                         bl.ItemName = itDto.Name;
                         bl.Amount = adults + children.Count;
+                        bl.Debit = bl.ItemNumber < 9000 ? true : false;
+
 
                         // bl.TaxId = item.TaxId;
                         // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
@@ -307,6 +315,7 @@ public class PackageExecution
                         bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                         bl.ItemName = itDto.Name;
                         bl.Amount = amountBreakfast;
+                        bl.Debit = bl.ItemNumber < 9000 ? true : false;
 
                         // bl.TaxId = item.TaxId;
                         // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
@@ -337,6 +346,7 @@ public class PackageExecution
                             bl.ItemNumber = itDto != null ? itDto.ItemNumber : 0;
                             bl.ItemName = itDto.Name;
                             bl.Amount = packageAmount * roomAmount;
+                            bl.Debit = bl.ItemNumber < 9000 ? true : false;
 
                             // bl.TaxId = item.TaxId;
                             // Anhand von dateCurrently in itDto.PriceTaxes die gültige TaxId ermitteln
@@ -351,7 +361,6 @@ public class PackageExecution
                     }
 
                     break;
-
             }
 
             return list;

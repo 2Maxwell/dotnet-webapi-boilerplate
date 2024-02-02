@@ -12,11 +12,11 @@ public class BookingDto : IDto
     public int ItemId { get; set; }
     public int ItemNumber { get; set; }
     public string? Source { get; set; }
-    public int BookingLineNumberId { get; set; }
+    public string? BookingLineNumberId { get; set; }
     public int TaxId { get; set; }
     public decimal TaxRate { get; set; }
     public int InvoicePos { get; set; }
     public int State { get; set; }
     public int InvoiceId { get; set; }
-    public int ReferenceId { get; set; }
+    public string? ReferenceId { get; set; }
 }

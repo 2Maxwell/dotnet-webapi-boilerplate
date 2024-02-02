@@ -6,9 +6,9 @@ public class InvoiceController : VersionedApiController
     [HttpPost]
     [MustHavePermission(FSHAction.Create, FSHResource.Brands)]
     [OpenApiOperation("Create a new Invoice.", "")]
-    public Task<int> CreateAsync(CreateInvoiceRequest request)
+    public Task<string> CreateAsync(CreateInvoiceRequest request)
     {
-        return Mediator.Send(request);        
+        return Mediator.Send(request);
     }
 
     [HttpPost("createInvoiceSolo")]

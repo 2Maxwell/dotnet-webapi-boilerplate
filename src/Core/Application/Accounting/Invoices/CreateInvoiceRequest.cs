@@ -1,5 +1,6 @@
 ﻿using FSH.WebApi.Application.Accounting.Bookings;
 using FSH.WebApi.Application.Accounting.Mandants;
+using FSH.WebApi.Application.Accounting.Taxes;
 using FSH.WebApi.Application.ReportsContract;
 using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Common.Events;
@@ -7,7 +8,7 @@ using FSH.WebApi.Domain.Hotel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FSH.WebApi.Application.Accounting.Invoices;
-public class CreateInvoiceRequest : IRequest<int>
+public class CreateInvoiceRequest : IRequest<string>
 {
     public int MandantId { get; set; }
     // public int InvoiceIdMandant { get; set; }
@@ -54,31 +55,41 @@ public class CreateInvoiceRequestValidator : CustomValidator<CreateInvoiceReques
     }
 }
 
-public class CreateInvoiceRequestHandler : IRequestHandler<CreateInvoiceRequest, int>
+public class CreateInvoiceRequestHandler : IRequestHandler<CreateInvoiceRequest, string>
 {
     private readonly IRepository<Invoice> _invoiceRepository;
     private readonly IRepository<InvoiceDetail> _invoiceDetailRepository;
     private readonly IRepository<MandantNumbers> _mandantNumbersRepository;
     private readonly IReportService<InvoiceReportDto> _reportService;
     private readonly IReadRepository<MandantDetail> _repositoryMandantDetail;
+    private readonly IReadRepository<MandantSetting> _repositoryMandantSetting;
+    private readonly IReadRepository<Tax> _repositoryTax;
     private readonly IReadRepository<Reservation> _repositoryReservation;
 
-    public CreateInvoiceRequestHandler(IRepository<Invoice> invoiceRepository, IRepository<InvoiceDetail> invoiceDetailRepository, IRepository<MandantNumbers> mandantNumbersRepository, IReportService<InvoiceReportDto> reportService, IReadRepository<MandantDetail> repositoryMandantDetail, IReadRepository<Reservation> repositoryReservation)
+    public CreateInvoiceRequestHandler(IRepository<Invoice> invoiceRepository, IRepository<InvoiceDetail> invoiceDetailRepository, IRepository<MandantNumbers> mandantNumbersRepository, IReportService<InvoiceReportDto> reportService, IReadRepository<MandantDetail> repositoryMandantDetail, IReadRepository<MandantSetting> repositoryMandantSetting, IReadRepository<Tax> repositoryTax, IReadRepository<Reservation> repositoryReservation)
     {
         _invoiceRepository = invoiceRepository;
         _invoiceDetailRepository = invoiceDetailRepository;
         _mandantNumbersRepository = mandantNumbersRepository;
         _reportService = reportService;
         _repositoryMandantDetail = repositoryMandantDetail;
+        _repositoryMandantSetting = repositoryMandantSetting;
+        _repositoryTax = repositoryTax;
         _repositoryReservation = repositoryReservation;
     }
 
-    public async Task<int> Handle(CreateInvoiceRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(CreateInvoiceRequest request, CancellationToken cancellationToken)
     {
         GetMandantNumberRequest mNumberRequest = new(request.MandantId, "Invoice");
         GetMandantNumberRequestHandler getMandantNumberRequestHandler = new(_mandantNumbersRepository);
         int invoiceNumberMandant = await getMandantNumberRequestHandler.Handle(mNumberRequest, cancellationToken);
         List<InvoiceDetail> invoiceDetails = new List<InvoiceDetail>();
+
+        var mandantSettingSpec = new GetMandantSettingByMandantIdSpec(request.MandantId);
+        MandantSettingDto? mandantSettingDto = await _repositoryMandantSetting.GetBySpecAsync((ISpecification<MandantSetting, MandantSettingDto>)mandantSettingSpec, cancellationToken);
+
+        var taxesSpec = new TaxesByCountryIdSpec(mandantSettingDto.TaxCountryId);
+        List<TaxDto> TaxesList = await _repositoryTax.ListAsync(taxesSpec, cancellationToken);
 
         var invoice = new Invoice(
                 request.MandantId,
@@ -101,7 +112,7 @@ public class CreateInvoiceRequestHandler : IRequestHandler<CreateInvoiceRequest,
                 request.InvoiceTotalNet,
                 request.InvoiceTaxesJson,
                 request.InvoicePaymentsJson,
-                null, // request.FileName, // ist ein wenig tricky wann ds ermittelt wird und wie gespeichert wird
+                null, // request.FileName, // ist ein wenig tricky wann das ermittelt wird und wie gespeichert wird
                 request.InvoiceKz);
 
         // invoice.DomainEvents.Add(EntityCreatedEvent.WithEntity(invoice));
@@ -142,7 +153,6 @@ public class CreateInvoiceRequestHandler : IRequestHandler<CreateInvoiceRequest,
         //GetInvoiceReportRequestHandler getInvoiceReportRequestHandler = new(_reportService, _repositoryMandantDetail, _repositoryReservation);
         //return await getInvoiceReportRequestHandler.Handle(getInvoiceReportRequest, cancellationToken);
 
-        return invoiceSaved.InvoiceIdMandant;
-
+        return $"{invoice.Id}-{invoice.InvoiceIdMandant}";
     }
 }

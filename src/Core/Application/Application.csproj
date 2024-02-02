@@ -6,6 +6,12 @@
     </PropertyGroup>
     <ItemGroup>
       <Compile Remove="Hotel\Rooms\CountRoomsByCategoryDto.cs" />
+      <Compile Remove="Reports\ReportDataSets\dsReservations.Designer.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="Reports\ReportDataSets\dsReservations.xsc" />
+      <None Remove="Reports\ReportDataSets\dsReservations.xsd" />
+      <None Remove="Reports\ReportDataSets\dsReservations.xss" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Ardalis.Specification" Version="6.0.1" />
@@ -21,7 +27,7 @@
         <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Accounting\Journal\" />
       <Folder Include="Accounting\PriceCatRates\" />
+      <Folder Include="Reports\ReportDataSets\" />
     </ItemGroup>
 </Project>

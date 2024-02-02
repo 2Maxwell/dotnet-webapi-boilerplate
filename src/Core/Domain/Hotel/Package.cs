@@ -1,9 +1,34 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FSH.WebApi.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace FSH.WebApi.Domain.Hotel;
 
 public class Package : AuditableEntity<int>, IAggregateRoot
 {
+    public Package(int mandantId, string? name, string? kz, string? description, string? display, string? displayShort, string? displayHighLight, string? confirmationText, int invoicePosition, string? invoiceName, int packageBookingBaseEnumId, int packageBookingRhythmEnumId, string packageTargetEnum, bool optional, bool shopExtern, string? chipIcon, string? chipText, int? durationUnitEnumId, int? duration, int? appointmentTargetEnum)
+    {
+        MandantId = mandantId;
+        Name = name;
+        Kz = kz;
+        Description = description;
+        Display = display;
+        DisplayShort = displayShort;
+        DisplayHighLight = displayHighLight;
+        ConfirmationText = confirmationText;
+        InvoicePosition = invoicePosition;
+        InvoiceName = invoiceName;
+        PackageBookingBaseEnumId = packageBookingBaseEnumId;
+        PackageBookingRhythmEnumId = packageBookingRhythmEnumId;
+        PackageTargetEnum = packageTargetEnum;
+        Optional = optional;
+        ShopExtern = shopExtern;
+        ChipIcon = chipIcon;
+        ChipText = chipText;
+        DurationUnitEnumId = durationUnitEnumId;
+        Duration = duration;
+        AppointmentTargetEnum = appointmentTargetEnum;
+    }
+
     [Required]
     public int MandantId { get; set; }
     [Required]
@@ -42,32 +67,15 @@ public class Package : AuditableEntity<int>, IAggregateRoot
     public string? ChipIcon { get; set; }
     [StringLength(50)]
     public string? ChipText { get; set; }
+    public int? DurationUnitEnumId { get; set; }
+    public int? Duration { get; set; }
+    public int? AppointmentTargetEnum { get; set; } // 0 = Restaurant, Wellness (Behandlungen), Billiardtisch, Radvermietung, Tee Time, ...
 
     // PackageTypeEnum: SystemPackage(z.B. Logis buchen ist ein SystemPackage), ReservationPackage (nur innerhalb der Rate definierbar: Early, Weekend),
     // OptionPackage HotelOptionen, RestaurantOptionen, TagungsOptionen, WellnessOptionen, Kegelbahn...
 
-    public Package(int mandantId, string? name, string? kz, string? description, string? display, string? displayShort, string? displayHighLight, string? confirmationText, int invoicePosition, string? invoiceName, int packageBookingBaseEnumId, int packageBookingRhythmEnumId, string packageTargetEnum, bool optional, bool shopExtern, string? chipIcon, string? chipText)
-    {
-        MandantId = mandantId;
-        Name = name;
-        Kz = kz;
-        Description = description;
-        Display = display;
-        DisplayShort = displayShort;
-        DisplayHighLight = displayHighLight;
-        ConfirmationText = confirmationText;
-        InvoicePosition = invoicePosition;
-        InvoiceName = invoiceName;
-        PackageBookingBaseEnumId = packageBookingBaseEnumId;
-        PackageBookingRhythmEnumId = packageBookingRhythmEnumId;
-        PackageTargetEnum = packageTargetEnum;
-        Optional = optional;
-        ShopExtern = shopExtern;
-        ChipIcon = chipIcon;
-        ChipText = chipText;
-    }
 
-    public Package Update(string? name, string? kz, string? description, string? display, string? displayShort, string? displayHighLight, string? confirmationText, int invoicePosition, string? invoiceName, int packageBookingBaseEnumId, int packageBookingRhythmEnumId, string packageTargetEnum, bool optional, bool shopExtern, string? chipIcon, string? chipText)
+    public Package Update(string? name, string? kz, string? description, string? display, string? displayShort, string? displayHighLight, string? confirmationText, int invoicePosition, string? invoiceName, int packageBookingBaseEnumId, int packageBookingRhythmEnumId, string packageTargetEnum, bool optional, bool shopExtern, string? chipIcon, string? chipText, int? durationUnitEnumId, int? duration, int? appointmentTargetEnum)
     {
         if (name is not null && Name?.Equals(name) is not true) Name = name;
         if (kz is not null && Kz?.Equals(kz) is not true) Kz = kz;
@@ -85,6 +93,10 @@ public class Package : AuditableEntity<int>, IAggregateRoot
         ShopExtern = shopExtern;
         if (chipIcon is not null && ChipIcon?.Equals(chipIcon) is not true) ChipIcon = chipIcon;
         if (chipText is not null && ChipText?.Equals(chipText) is not true) ChipText = chipText;
+        if (durationUnitEnumId is not null && DurationUnitEnumId?.Equals(durationUnitEnumId) is not true) DurationUnitEnumId = durationUnitEnumId;
+        if (duration is not null && Duration?.Equals(duration) is not true) Duration = duration;
+        if (appointmentTargetEnum is not null && AppointmentTargetEnum?.Equals(appointmentTargetEnum) is not true) AppointmentTargetEnum = appointmentTargetEnum;
+
         return this;
     }
 }

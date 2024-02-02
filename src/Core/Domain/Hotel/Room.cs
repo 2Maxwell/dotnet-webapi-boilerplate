@@ -14,8 +14,6 @@ public class Room : AuditableEntity<int>, IAggregateRoot
     [StringLength(50)]
     public string Name { get; set; }
 
-    public string NameUnique { get; set; }
-
     [Required]
     [StringLength(100)]
     public string? Description { get; set; }
@@ -45,20 +43,28 @@ public class Room : AuditableEntity<int>, IAggregateRoot
 
     [StringLength(50)]
     public string? PhoneNumber { get; set; }
-    public string? PhoneNumberUnique { get; set; }
     public bool ArrExp { get; set; }
     public bool ArrCi { get; set; }
     public bool Occ { get; set; }
     public bool DepExp { get; set; }
     public bool DepOut { get; set; }
+    public int CleaningState { get; set; }
 
-    //Status für Zimmerreinigung
-    public bool Assigned { get; set; }
+    // 0 = nicht zugewiesen UnAssigned
+    // 1 = zugewiesen Assigned
+    // 2 = in Reinigung IsCleaning
+    // 3 = Reinigung abgeschlossen PendingClean
+    // 4 = Reinigung abgeschlossen und kontrolliert CleanChecked
+
+    // Status für Zimmerreinigung
+    // public bool Assigned { get; set; }
     public int DirtyDays { get; set; }
+
     public int AssignedId { get; set; } // Zimmermädchen zugewiesen
-    public bool IsCleaning { get; set; }
-    public bool PendingClean { get; set; }
-    public bool CleanChecked { get; set; }
+
+    // public bool IsCleaning { get; set; }
+    // public bool PendingClean { get; set; }
+    // public bool CleanChecked { get; set; }
     public int MinutesOccupied { get; set; }
     public int MinutesDeparture { get; set; }
     public int MinutesDefault { get; set; }
@@ -73,7 +79,8 @@ public class Room : AuditableEntity<int>, IAggregateRoot
 
     }
 
-    public Room(int mandantId, int categoryId, string name, string description, string displayDescription, int beds, int bedsExtra, string facilities, string phoneNumber)
+    public Room(int mandantId, int categoryId, string name, string description, string displayDescription, int beds, int bedsExtra, string facilities, string phoneNumber, int cleaningState, int dirtyDays, int assignedId,
+        int minutesOccupied, int minutesDeparture, int minutesDefault)
     {
         MandantId = mandantId;
         CategoryId = categoryId;
@@ -88,13 +95,19 @@ public class Room : AuditableEntity<int>, IAggregateRoot
         Blocked = true;
         BlockedStart = null;
         BlockedEnd = null;
-        NameUnique = Name + "|" + MandantId;
-        PhoneNumberUnique = this.PhoneNumber + "|" + this.MandantId;
+        CleaningState = cleaningState;
+        DirtyDays = dirtyDays;
+        AssignedId = assignedId;
+        MinutesOccupied = minutesOccupied;
+        MinutesDeparture = minutesDeparture;
+        MinutesDefault = minutesDefault;
+
     }
 
     public Room Update(int categoryId, string name, string? description, string displayDescription,
         int beds, int bedsExtra, string facilities, string phoneNumber, bool clean, bool blocked,
-        DateTime? blockedStart, DateTime? blockedEnd)
+        DateTime? blockedStart, DateTime? blockedEnd, int cleaningState, int dirtyDays,int assignedId,
+        int minutesOccupied, int minutesDeparture, int minutesDefault)
     {
         CategoryId = categoryId;
         if (name is not null && Name?.Equals(name) is not true) Name = name;
@@ -108,9 +121,12 @@ public class Room : AuditableEntity<int>, IAggregateRoot
         Blocked = blocked;
         if (blockedStart is not null && BlockedStart?.Equals(blockedStart) is not true) BlockedStart = blockedStart;
         if (blockedEnd is not null && BlockedEnd?.Equals(blockedEnd) is not true) BlockedEnd = blockedEnd;
-        NameUnique = Name + "|" + MandantId;
-        PhoneNumberUnique = this.PhoneNumber + "|" + this.MandantId;
-
+        CleaningState = cleaningState;
+        DirtyDays = dirtyDays;
+        AssignedId = assignedId;
+        MinutesOccupied = minutesOccupied;
+        MinutesDeparture = minutesDeparture;
+        MinutesDefault = minutesDefault;
         return this;
     }
 
@@ -144,10 +160,7 @@ public class Room : AuditableEntity<int>, IAggregateRoot
             DepOut = false;
             Clean = false;
             DirtyDays = DirtyDays++;
-            Assigned = false;
-            IsCleaning = false;
-            PendingClean = false;
-            CleanChecked = false;
+            CleaningState = 0;
         }
 
         if (hotelDate == departureDate.AddDays(-1))
@@ -166,29 +179,29 @@ public class Room : AuditableEntity<int>, IAggregateRoot
         return this;
     }
 
-    public Room SetRoomStateAssignToCleaning(bool assigned, int assignedId)
+    public Room SetRoomStateAssignToCleaning(int assignedId)
     {
-        Assigned = assigned;
+        CleaningState = 1; // 1 = zugewiesen
         AssignedId = assignedId;
         return this;
     }
 
-    public Room SetRoomStateIsCleaning(bool isCleaning)
+    public Room SetRoomStateIsCleaning()
     {
-        IsCleaning = isCleaning;
+        CleaningState = 2; // 2 = IsCleaning
         return this;
     }
 
-    public Room SetRoomStatePendingClean(bool pendingClean)
+    public Room SetRoomStatePendingClean()
     {
-        PendingClean = pendingClean;
+        CleaningState = 3; // 3 = PendingClean
         return this;
     }
 
-    public Room SetRoomStateCleanChecked(bool cleanChecked)
+    public Room SetRoomStateCleanChecked()
     {
-        CleanChecked = cleanChecked;
-        Clean = cleanChecked ? true : false;
+        CleaningState = 4; // 4 = CleanChecked
+        Clean = true;
         return this;
     }
 
@@ -197,5 +210,4 @@ public class Room : AuditableEntity<int>, IAggregateRoot
         Clean = clean;
         return this;
     }
-
 }

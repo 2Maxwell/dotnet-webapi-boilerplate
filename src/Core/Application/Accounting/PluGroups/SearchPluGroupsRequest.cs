@@ -1,10 +1,4 @@
-﻿using FSH.WebApi.Application.Catalog.Brands;
-using FSH.WebApi.Domain.Accounting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FSH.WebApi.Domain.Accounting;
 
 namespace FSH.WebApi.Application.Accounting.PluGroups;
 

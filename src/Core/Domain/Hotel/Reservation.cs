@@ -47,6 +47,7 @@ public class Reservation : AuditableEntity<int>, IAggregateRoot
     [StringLength(100)]
     public string? PaxString { get; set; } // um Pax zu erzeugen
     public Guid? CartId { get; set; }
+    public DateTime? BookingDone { get; set; }
     public string? Confirmations { get; set; }
     [StringLength(250)]
     public string? Wishes { get; set; }
@@ -137,6 +138,26 @@ public class Reservation : AuditableEntity<int>, IAggregateRoot
         CartId = cartId;
         Confirmations = confirmations;
         Wishes = wishes;
+        return this;
+    }
+
+    public Reservation UpdateTransfer(string? transfer)
+    {
+        if (transfer is not null && Transfer?.Equals(transfer) is not true) Transfer = transfer;
+        return this;
+    }
+
+    public Reservation UpdateBookingDone(DateTime bookingDone)
+    {
+        BookingDone = bookingDone;
+        return this;
+    }
+
+    public Reservation CheckOut()
+    {
+        ResKz = "O";
+        // SET Departure Time to = Time.Now
+        // Departure = DateTime.Now;
         return this;
     }
 }

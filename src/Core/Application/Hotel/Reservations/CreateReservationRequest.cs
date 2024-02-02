@@ -233,13 +233,12 @@ public class CreateReservationRequestHandler : IRequestHandler<CreateReservation
                     peDto.ImagePath,
                     peDto.Amount,
                     peDto.Price,
-                    peDto.Appointment,
-                    peDto.AppointmentSource,
-                    peDto.AppointmentSourceId,
+                    peDto.AppointmentId,
+                    peDto.AppointmentTargetEnum,
                     PackageExtendedStateEnum.pending,
                     PackageExtendSourceEnum.HotelReservation,
-                    reservation.Id,
-                    peDto.Duration);
+                    reservation.Id
+                    );
                 packageExtend.DomainEvents.Add(EntityCreatedEvent.WithEntity(packageExtend));
                 await _repositoryPackageExtend.AddAsync(packageExtend, cancellationToken);
             }

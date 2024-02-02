@@ -1,4 +1,5 @@
-﻿using FSH.WebApi.Application.Accounting.Taxes;
+﻿using FSH.WebApi.Application.Accounting.Mandants;
+using FSH.WebApi.Application.Accounting.Taxes;
 using FSH.WebApi.Domain.Accounting;
 
 namespace FSH.WebApi.Application.Accounting.Items;
@@ -20,14 +21,16 @@ public class GetItemsCashierRequestHandler : IRequestHandler<GetItemsCashierRequ
     private readonly IRepository<ItemPriceTax> _repositoryItemPriceTax;
     private readonly IRepository<Tax> _repositoryTax;
     private readonly IRepository<TaxItem> _repositoryTaxItem;
+    private readonly IRepository<MandantSetting> _repositoryMandantSetting;
     private readonly IStringLocalizer<GetItemsCashierRequestHandler> _localizer;
 
-    public GetItemsCashierRequestHandler(IRepository<Item> repository, IRepository<ItemPriceTax> repositoryItemPriceTax, IRepository<Tax> repositoryTax, IRepository<TaxItem> repositoryTaxItem, IStringLocalizer<GetItemsCashierRequestHandler> localizer)
+    public GetItemsCashierRequestHandler(IRepository<Item> repository, IRepository<ItemPriceTax> repositoryItemPriceTax, IRepository<Tax> repositoryTax, IRepository<TaxItem> repositoryTaxItem, IRepository<MandantSetting> repositoryMandantSetting, IStringLocalizer<GetItemsCashierRequestHandler> localizer)
     {
         _repository = repository;
         _repositoryItemPriceTax = repositoryItemPriceTax;
         _repositoryTax = repositoryTax;
         _repositoryTaxItem = repositoryTaxItem;
+        _repositoryMandantSetting = repositoryMandantSetting;
         _localizer = localizer;
     }
 
@@ -35,15 +38,15 @@ public class GetItemsCashierRequestHandler : IRequestHandler<GetItemsCashierRequ
     {
         List<ItemCashierDto> items = await _repository.ListAsync((ISpecification<Item, ItemCashierDto>)new ItemsByMandantIdAndMandantId0WithOutAutomaticSpec(request.MandantId), cancellationToken)
                 ?? throw new NotFoundException(string.Format(_localizer["Items.notfound"], request.MandantId));
-        // await _repository.ListAsync((ISpecification<Item, ItemCashierDto>)new ItemsByMandantIdAndMandantId0WithOutAutomaticSpec(request.MandantId), cancellationToken)
 
-        List<TaxDto> taxListe = await _repositoryTax.ListAsync((ISpecification<Tax, TaxDto>)new TaxByMandantIdSpec(request.MandantId), cancellationToken)
-                           ?? throw new NotFoundException(string.Format(_localizer["Taxes.notfound"], request.MandantId));
-        foreach (var item in taxListe)
+        var mandantSettingDto = await _repositoryMandantSetting.GetBySpecAsync((ISpecification<MandantSetting, MandantSettingDto>)new GetMandantSettingByMandantIdSpec(request.MandantId), cancellationToken);
+
+        List<TaxDto> taxesList = await _repositoryTax.ListAsync((ISpecification<Tax, TaxDto>)new TaxDtoByTaxCountryIdSpec(mandantSettingDto.TaxCountryId, request.MandantId), cancellationToken);
+
+        foreach (var item in taxesList)
         {
             item.TaxItems = await _repositoryTaxItem.ListAsync((ISpecification<TaxItem, TaxItemDto>)new TaxItemByTaxIdSpec(item.Id), cancellationToken)
                            ?? throw new NotFoundException(string.Format(_localizer["TaxItems.notfound"], item.Id));
-
         }
 
         foreach (var item in items)
@@ -56,7 +59,7 @@ public class GetItemsCashierRequestHandler : IRequestHandler<GetItemsCashierRequ
 
             // TaxRate muss auch nach Datum gesucht werden.
 
-            item.TaxRate = taxListe.Where(t => t.Id == item.TaxId).FirstOrDefault()?.TaxItems.Where(ti => (ti.Start <= request.HotelDate && ti.End >= request.HotelDate) || (ti.Start <= request.HotelDate && ti.End is null)).FirstOrDefault()?.TaxRate ?? 0;
+            item.TaxRate = taxesList.Where(t => t.Id == item.TaxId).FirstOrDefault()?.TaxItems.Where(ti => (ti.Start <= request.HotelDate && ti.End >= request.HotelDate) || (ti.Start <= request.HotelDate && ti.End is null)).FirstOrDefault()?.TaxRate ?? 0;
         }
 
         return items;

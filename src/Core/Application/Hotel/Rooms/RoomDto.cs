@@ -16,4 +16,10 @@ public class RoomDto : IDto
     public DateTime? BlockedStart { get; set; }
     public DateTime? BlockedEnd { get; set; }
     public string? CategoryName { get; set; }
+    public int CleaningState { get; set; }
+    public int DirtyDays { get; set; }
+    public int AssignedId { get; set; }
+    public int MinutesOccupied { get; set; }
+    public int MinutesDeparture { get; set; }
+    public int MinutesDefault { get; set; }
 }

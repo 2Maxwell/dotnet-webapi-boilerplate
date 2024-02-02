@@ -135,8 +135,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("BookingLineNumberId")
-                        .HasColumnType("int");
+                    b.Property<string>("BookingLineNumberId")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -188,8 +189,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ReferenceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("ReservationId")
                         .HasColumnType("int");
@@ -211,6 +213,144 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.HasKey("Id");
 
                     b.ToTable("Booking", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Accounting.CashierJournal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Debit")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("HotelDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InvoiceIdMandant")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemNumber")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JournalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("JournalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JournalIdMandant")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KasseId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StateDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashierJournal", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Accounting.CashierRegister", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Open")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Stock")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashierRegister", "Lnx");
                 });
 
             modelBuilder.Entity("FSH.WebApi.Domain.Accounting.Invoice", b =>
@@ -273,12 +413,12 @@ namespace Migrators.MSSQL.Migrations.Application
                         .HasColumnType("nvarchar(1)");
 
                     b.Property<string>("InvoicePaymentsJson")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("InvoiceTaxesJson")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<decimal>("InvoiceTotal")
                         .HasColumnType("decimal(18,2)");
@@ -333,8 +473,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BookingLineNumberId")
-                        .HasColumnType("int");
+                    b.Property<string>("BookingLineNumberId")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -386,8 +527,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ReferenceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("ReservationId")
                         .HasColumnType("int");
@@ -475,8 +617,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BookingLineNumberId")
-                        .HasColumnType("int");
+                    b.Property<string>("BookingLineNumberId")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -534,8 +677,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ReferenceId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("ReservationId")
                         .HasColumnType("int");
@@ -602,9 +746,6 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<string>("Name")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("TaxCountryId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -829,6 +970,9 @@ namespace Migrators.MSSQL.Migrations.Application
                         .HasColumnType("datetime2");
 
                     b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaxCountryId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1273,6 +1417,522 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.HasIndex("TaxId");
 
                     b.ToTable("TaxItem", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.Board", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BoardLabelAdd")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BoardLabelRemove")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DefaultBoardItemLabelGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("DoneBoard")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<int?>("SourceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<bool>("UserOnly")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Board", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardCollection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("BoardIds")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("BoardItemLabelIds")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<bool>("UserOnly")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardCollection", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BoardId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BoardItemLabelIds")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("BoardItemRepeaterJson")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("BoardItemTagIds")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<int?>("BoardItemTypeEnumId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BoardSourceIdJson")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DefaultBoardItemLabelGroupId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("FixedBoard")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ImageName")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsTemplate")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RepeatMatchCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("SourceLink")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItem", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BoardItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemAttachment", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemLabel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BoardItemLabelGroupId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("DefaultLabel")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemLabel", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemLabelGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemLabelGroup", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemSub", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BoardItemId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResultLabel")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("ResultType")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool?>("ResultValueBool")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("ResultValueDecimal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ResultValueInt")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResultValueString")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemSub", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BoardItemTagGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemTag", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Boards.BoardItemTagGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BoardItemTagGroup", "Lnx");
                 });
 
             modelBuilder.Entity("FSH.WebApi.Domain.Catalog.Brand", b =>
@@ -1895,7 +2555,7 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.ToTable("VipStatus", "Lnx");
                 });
 
-            modelBuilder.Entity("FSH.WebApi.Domain.Helper.PackageExtend", b =>
+            modelBuilder.Entity("FSH.WebApi.Domain.General.Appointment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1903,17 +2563,7 @@ namespace Migrators.MSSQL.Migrations.Application
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("Appointment")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("AppointmentSource")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("AppointmentSourceId")
+                    b.Property<int>("AppointmentTargetEnumId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("CreatedBy")
@@ -1928,8 +2578,82 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("Done")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DoneDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
+
+                    b.Property<int?>("DurationUnitEnumId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MandantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Appointment", "Lnx");
+                });
+
+            modelBuilder.Entity("FSH.WebApi.Domain.Helper.PackageExtend", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AppointmentTargetEnum")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ImagePath")
                         .HasMaxLength(200)
@@ -2186,7 +2910,6 @@ namespace Migrators.MSSQL.Migrations.Application
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Display")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -2269,6 +2992,9 @@ namespace Migrators.MSSQL.Migrations.Application
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("AppointmentTargetEnum")
+                        .HasColumnType("int");
+
                     b.Property<string>("ChipIcon")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -2313,6 +3039,12 @@ namespace Migrators.MSSQL.Migrations.Application
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
+
+                    b.Property<int?>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DurationUnitEnumId")
+                        .HasColumnType("int");
 
                     b.Property<string>("InvoiceName")
                         .HasMaxLength(50)
@@ -2623,6 +3355,9 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<int>("BookerId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("BookingDone")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("BookingPolicyId")
                         .HasColumnType("int");
 
@@ -2771,9 +3506,6 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<bool>("ArrExp")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Assigned")
-                        .HasColumnType("bit");
-
                     b.Property<int>("AssignedId")
                         .HasColumnType("int");
 
@@ -2798,8 +3530,8 @@ namespace Migrators.MSSQL.Migrations.Application
                     b.Property<bool>("Clean")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CleanChecked")
-                        .HasColumnType("bit");
+                    b.Property<int>("CleaningState")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -2836,9 +3568,6 @@ namespace Migrators.MSSQL.Migrations.Application
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<bool>("IsCleaning")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -2862,22 +3591,12 @@ namespace Migrators.MSSQL.Migrations.Application
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("NameUnique")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("Occ")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("PendingClean")
                         .HasColumnType("bit");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PhoneNumberUnique")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

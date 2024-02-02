@@ -1,4 +1,6 @@
-﻿using FSH.WebApi.Domain.Helper;
+﻿using FSH.WebApi.Application.General.Appointments;
+using FSH.WebApi.Domain.General;
+using FSH.WebApi.Domain.Helper;
 using FSH.WebApi.Domain.Hotel;
 using Mapster;
 
@@ -27,13 +29,15 @@ public class GetPackageExtendOptionsByReservationRequestHandler : IRequestHandle
     private readonly IRepository<PackageExtend> _repository;
     private readonly IRepository<Package> _packageRepository;
     private readonly IRepository<PackageItem> _packageItemRepository;
+    private readonly IRepository<Appointment> _appointmentRepository;
     private readonly IStringLocalizer<GetPackageExtendOptionsByReservationRequestHandler> _localizer;
 
-    public GetPackageExtendOptionsByReservationRequestHandler(IRepository<PackageExtend> repository, IRepository<Package> packagerepository, IRepository<PackageItem> packageItemRepository, IStringLocalizer<GetPackageExtendOptionsByReservationRequestHandler> localizer)
+    public GetPackageExtendOptionsByReservationRequestHandler(IRepository<PackageExtend> repository, IRepository<Package> packageRepository, IRepository<PackageItem> packageItemRepository, IRepository<Appointment> appointmentRepository, IStringLocalizer<GetPackageExtendOptionsByReservationRequestHandler> localizer)
     {
         _repository = repository;
-        _packageRepository = packagerepository;
+        _packageRepository = packageRepository;
         _packageItemRepository = packageItemRepository;
+        _appointmentRepository = appointmentRepository;
         _localizer = localizer;
     }
 
@@ -52,10 +56,15 @@ public class GetPackageExtendOptionsByReservationRequestHandler : IRequestHandle
 
                 var packageItemSpec = new PackageItemByPackageIdSpec(item.PackageId);
                 item.PackageDto.PackageItems = (await _packageItemRepository.ListAsync(packageItemSpec, cancellationToken)).Adapt<List<PackageItemDto>>();
+
+                if(item.AppointmentId.HasValue && item.AppointmentId > 0)
+                {
+                    item.AppointmentDto = (await _appointmentRepository.GetByIdAsync(item.AppointmentId.Value, cancellationToken)).Adapt<AppointmentDto>();
+                }
             }
         }
 
-        if (list == null) throw new NotFoundException(string.Format(_localizer["reservation.notfound"], request.ReservationId));
+        if (list == null) throw new NotFoundException(string.Format(_localizer["packages.notfound"], request.ReservationId));
 
         return list;
     }

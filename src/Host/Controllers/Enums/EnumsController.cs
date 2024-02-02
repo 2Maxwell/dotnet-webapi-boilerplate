@@ -1,7 +1,5 @@
-﻿using FSH.WebApi.Application.Hotel.Categorys;
-using FSH.WebApi.Application.Hotel.Enums;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using FSH.WebApi.Application.Hotel.Enums;
+using FSH.WebApi.Application.Tellus.Enums;
 
 namespace FSH.WebApi.Host.Controllers.Enums;
 public class EnumsController : VersionedApiController
@@ -78,5 +76,31 @@ public class EnumsController : VersionedApiController
         return Mediator.Send(new GetCompanyTypeEnumRequest());
     }
 
+    // DurationUnitEnum
+    [HttpGet("getDurationUnitEnum")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get DurationUnitEnum as List for Select.", "")]
 
+    public Task<List<DurationUnitEnumDto>> GetDurationUnitEnumRequest()
+    {
+        return Mediator.Send(new GetDurationUnitEnum());
+    }
+
+    // AppointmentTargetEnum
+    [HttpGet("getAppointmentTargetEnum")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get AppointmentTargetEnum as List for Select.", "")]
+    public Task<List<AppointmentTargetEnumDto>> GetAppointmentTargetEnumRequest()
+    {
+        return Mediator.Send(new GetAppointmentTargetEnumRequest());
+    }
+
+    // BoardItemTypeEnum
+    [HttpGet("getBoardItemTypeEnum")]
+    [MustHavePermission(FSHAction.Search, FSHResource.Brands)]
+    [OpenApiOperation("Get BoardItemTypeEnum as List for Select.", "")]
+    public Task<List<BoardItemTypeEnumDto>> GetBoardItemTypeEnumRequest()
+    {
+        return Mediator.Send(new GetBoardItemTypeEnumRequest());
+    }
 }

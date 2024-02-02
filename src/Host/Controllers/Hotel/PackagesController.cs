@@ -1,5 +1,4 @@
-﻿using FSH.WebApi.Application.Hotel.Categorys;
-using FSH.WebApi.Application.Hotel.Packages;
+﻿using FSH.WebApi.Application.Hotel.Packages;
 using FSH.WebApi.Domain.Enums;
 using FSH.WebApi.Domain.Helper;
 

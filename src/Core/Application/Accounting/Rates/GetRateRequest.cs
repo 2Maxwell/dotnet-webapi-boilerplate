@@ -21,8 +21,6 @@ public class GetRateRequestHandler : IRequestHandler<GetRateRequest, RateDto>
         RateDto? rateDto = await _repository.GetBySpecAsync(
             (ISpecification<Rate, RateDto>)new RateByIdSpec(request.Id), cancellationToken);
 
-        // ?? throw new NotFoundException(string.Format(_localizer["rate.notfound"], request.Id));
-
         if (rateDto == null) throw new NotFoundException(string.Format(_localizer["rate.notfound"], request.Id));
 
         return rateDto;

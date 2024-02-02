@@ -1,4 +1,5 @@
 ﻿using FSH.WebApi.Application.Accounting.Items;
+using FSH.WebApi.Application.Accounting.Mandants;
 using FSH.WebApi.Application.Accounting.Taxes;
 using FSH.WebApi.Application.Hotel;
 using FSH.WebApi.Application.Hotel.Packages;
@@ -26,13 +27,15 @@ public class GetRateShopMandantRecalculateRequestHandler : IRequestHandler<GetRa
     private readonly IReadRepository<PackageItem> _repositoryPackageItem;
     private readonly IReadRepository<Item> _repositoryItem;
     private readonly IReadRepository<Tax> _repositoryTax;
+    private readonly IReadRepository<MandantSetting> _repositoryMandantSetting;
 
-    public GetRateShopMandantRecalculateRequestHandler(IReadRepository<Package> repositoryPackage, IReadRepository<PackageItem> repositoryPackageItem, IReadRepository<Item> repositoryItem, IReadRepository<Tax> repositoryTax)
+    public GetRateShopMandantRecalculateRequestHandler(IReadRepository<Package> repositoryPackage, IReadRepository<PackageItem> repositoryPackageItem, IReadRepository<Item> repositoryItem, IReadRepository<Tax> repositoryTax, IReadRepository<MandantSetting> repositoryMandantSetting)
     {
         _repositoryPackage = repositoryPackage;
         _repositoryPackageItem = repositoryPackageItem;
         _repositoryItem = repositoryItem;
         _repositoryTax = repositoryTax;
+        _repositoryMandantSetting = repositoryMandantSetting;
     }
 
     public async Task<RateShopMandantDto> Handle(GetRateShopMandantRecalculateRequest request, CancellationToken cancellationToken)
@@ -40,7 +43,10 @@ public class GetRateShopMandantRecalculateRequestHandler : IRequestHandler<GetRa
         var itemsSpec = new ItemsByMandantIdAndMandantId0Spec(request.MandantId);
         List<ItemDto> ItemsList = await _repositoryItem.ListAsync(itemsSpec, cancellationToken);
 
-        var taxesSpec = new TaxesByCountryIdSpec(49);
+        var mandantSettingSpec = new GetMandantSettingByMandantIdSpec(request.MandantId);
+        MandantSettingDto? mandantSettingDto = await _repositoryMandantSetting.GetBySpecAsync((ISpecification<MandantSetting, MandantSettingDto>)mandantSettingSpec, cancellationToken);
+
+        var taxesSpec = new TaxesByCountryIdSpec(mandantSettingDto.TaxCountryId);
         List<TaxDto> TaxesList = await _repositoryTax.ListAsync(taxesSpec, cancellationToken);
 
         RateShopMandantDto rsmDto = request.rateShopMandantDto;
@@ -94,7 +100,7 @@ public class GetRateShopMandantRecalculateRequestHandler : IRequestHandler<GetRa
                 packageExecution.children = request.pax.Children!;
                 packageExecution.amountBreakfast = 1;
                 packageExecution.packageAmount = 0;
-                packageExecution.bookingLineNumber = int.Parse(i.ToString("yyyyMMdd"));
+                packageExecution.bookingLineNumber = packageExtendDto.PackageDto.Kz + i.ToString("yyyyMMddHHmmssfff");
                 packageExecution.itemsList = ItemsList;
                 packageExecution.taxesList = TaxesList;
 

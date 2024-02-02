@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSH.WebApi.Domain.Hotel;
 
@@ -34,7 +33,6 @@ public class Category : AuditableEntity<int>, IAggregateRoot
     public int NumberOfBeds { get; set; } = 1;
 
     public int NumberOfExtraBeds { get; set; } = 0;
-    [Required]
     [StringLength(500)]
     public string? Display { get; set; }
     [StringLength(300)]

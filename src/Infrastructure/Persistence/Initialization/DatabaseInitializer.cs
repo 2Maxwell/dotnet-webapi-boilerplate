@@ -54,6 +54,11 @@ internal class DatabaseInitializer : IDatabaseInitializer
     {
         if (_tenantDbContext.Database.GetPendingMigrations().Any())
         {
+            var migrations = await _tenantDbContext.Database.GetPendingMigrationsAsync(cancellationToken);
+            foreach (var migration in migrations)
+            {
+                _logger.LogInformation("Applying Migration '{migration}' to Tenant Database.", migration);
+            }
             _logger.LogInformation("Applying Root Migrations.");
             await _tenantDbContext.Database.MigrateAsync(cancellationToken);
         }

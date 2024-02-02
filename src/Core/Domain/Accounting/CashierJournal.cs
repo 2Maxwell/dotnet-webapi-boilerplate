@@ -4,7 +4,7 @@ namespace FSH.WebApi.Domain.Accounting;
 
 public class CashierJournal : AuditableEntity<int>, IAggregateRoot
 {
-    public CashierJournal(int mandantId, int journalId, int journalIdMandant, int bookingId, int? invoiceId, int? invoiceIdMandant, DateTime journalDate, DateTime hotelDate, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string? source, int state, int? kasseId)
+    public CashierJournal(int mandantId, int journalId, int journalIdMandant, int bookingId, int? invoiceId, int? invoiceIdMandant, DateTime journalDate, DateTime hotelDate, string name, decimal amount, decimal price, bool debit, int itemId, int itemNumber, string? source, int state, DateTime? stateDate, int? kasseId)
     {
         MandantId = mandantId;
         JournalId = journalId;
@@ -22,6 +22,7 @@ public class CashierJournal : AuditableEntity<int>, IAggregateRoot
         ItemNumber = itemNumber;
         Source = source;
         State = state;
+        StateDate = stateDate;
         KasseId = kasseId;
     }
 
@@ -54,7 +55,7 @@ public class CashierJournal : AuditableEntity<int>, IAggregateRoot
     [Required]
     [StringLength(100)]
     public string? Source { get; set; } // Vorgang; PackageKz = P:Kz
-    public int State { get; set; }
+    public int State { get; set; } // 1 = offen, 9 = abgerechnet wenn die Kasse geschlossen wird
+    public DateTime? StateDate { get; set; }
     public int? KasseId { get; set; }
-
 }

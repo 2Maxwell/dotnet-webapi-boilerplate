@@ -5,6 +5,8 @@
         <AssemblyName>FSH.WebApi.Host</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+        <PackageReference Include="BoldReports.Net.Core" Version="5.2.30" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
         <PackageReference Include="Hangfire.Console.Extensions.Serilog" Version="1.0.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
@@ -13,6 +15,8 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+        <PackageReference Include="System.CodeDom" Version="7.0.0" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Core\Application\Application.csproj" />
@@ -27,6 +31,16 @@
         <Content Update="Configurations\*.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <None Update="Controllers\Report\ReportDataSets\dsMandantDetail.xsd">
+          <SubType>Designer</SubType>
+          <LastGenOutput>dsMandantDetail.Designer.cs</LastGenOutput>
+          <Generator>MSDataSetGenerator</Generator>
+        </None>
+        <None Update="Controllers\Report\ReportDataSets\dsReservations.xsd">
+          <SubType>Designer</SubType>
+          <LastGenOutput>dsReservations.Designer.cs</LastGenOutput>
+          <Generator>MSDataSetGenerator</Generator>
+        </None>
         <None Update="Files\full-stack-hero-logo.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
@@ -45,5 +59,17 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Databases\Host\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Controllers\Report\ReportDataSets\dsMandantDetail.Designer.cs">
+        <DependentUpon>dsMandantDetail.xsd</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="Controllers\Report\ReportDataSets\dsReservations.Designer.cs">
+        <DependentUpon>dsReservations.xsd</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
     </ItemGroup>
 </Project>

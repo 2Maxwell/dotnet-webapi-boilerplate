@@ -2,6 +2,7 @@
 using FSH.WebApi.Domain.Enums;
 using FSH.WebApi.Domain.Environment;
 using FSH.WebApi.Domain.Hotel;
+using System.Linq.Expressions;
 
 namespace FSH.WebApi.Application.Hotel.Packages;
 public class GetPackageExtendsRequest : IRequest<List<PackageExtendDto>>
@@ -75,6 +76,17 @@ public class GetPackageExtendsRequestHandler : IRequestHandler<GetPackageExtends
 
             packageExtendDto.Amount = 0;
             packageExtendDto.Price = pack.PackageItems.Where(x => x.Start <= request.StartDate && x.End >= request.EndDate).Sum(x => x.Price);
+
+            if (pack.PackageBookingRhythmEnumId == (int)PackageBookingRhythmEnum.perAppointment)
+            {
+                packageExtendDto.AppointmentTargetEnum = (int)pack.AppointmentTargetEnum!;
+                Console.WriteLine("AppointmentTargetEnum: " + packageExtendDto.AppointmentTargetEnum);
+            }
+
+            //if (pack.PackageTargetEnum.Contains("Restaurant")) packageExtendDto.AppointmentTargetEnum = (int)AppointmentTargetEnum.Restaurant;
+            //if (pack.PackageTargetEnum.Contains("Wellness")) packageExtendDto.AppointmentTargetEnum = (int)AppointmentTargetEnum.Wellness;
+            //if (pack.PackageTargetEnum.Contains("Bike")) packageExtendDto.AppointmentTargetEnum = (int)AppointmentTargetEnum.BikeRental;
+
             listPackageExtended.Add(packageExtendDto);
         }
 

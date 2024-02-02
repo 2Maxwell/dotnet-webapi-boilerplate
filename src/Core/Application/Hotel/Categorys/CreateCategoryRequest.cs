@@ -118,6 +118,7 @@ public class CreateCategoryRequestHandler : IRequestHandler<CreateCategoryReques
         category.DomainEvents.Add(EntityCreatedEvent.WithEntity(category));
         await _repository.AddAsync(category, cancellationToken);
 
+        // TODO
         DateOnly start = new DateOnly(2022, 09, 01); // aktuelles Datum
         DateOnly end = new DateOnly(2022,10,31); // heute bis Anzahl Tage vorlauf in Hoteleinstellungen
 

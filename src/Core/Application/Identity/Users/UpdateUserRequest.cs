@@ -9,4 +9,5 @@ public class UpdateUserRequest
     public string? Email { get; set; }
     public FileUploadRequest? Image { get; set; }
     public bool DeleteCurrentImage { get; set; } = false;
+    public int? MandantId { get; set; }
 }

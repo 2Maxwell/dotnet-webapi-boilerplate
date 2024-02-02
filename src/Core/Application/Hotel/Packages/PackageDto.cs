@@ -24,5 +24,10 @@ public class PackageDto : IDto
     public bool ShopExtern { get; set; }
     public string? ChipIcon { get; set; }
     public string? ChipText { get; set; }
+    public int? DurationUnitEnumId { get; set; }
+    public int? Duration { get; set; }
+    public int? AppointmentTargetEnum { get; set; }
     public List<PackageItemDto>? PackageItems { get; set; } = new();
+
+
 }

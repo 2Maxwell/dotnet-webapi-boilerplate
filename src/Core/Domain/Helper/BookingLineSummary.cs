@@ -81,5 +81,45 @@ public class BookingLineSummary
         }
     }
 
+    public decimal BruttoByTaxRate(decimal taxRate)
+    {
+        decimal value = SourceList.Where(x => x.TaxRate == taxRate).Sum(x => x.PriceTotal);
+        return value;
+    }
+
+    public decimal NettoByTaxRate(decimal taxRate)
+    {
+        decimal value = SourceList.Where(x => x.TaxRate == taxRate).Sum(x => x.PriceTotal) / (100 + taxRate) * 100;
+        return value;
+    }
+
+    public decimal TaxByTaxRate(decimal taxRate)
+    {
+        decimal value = SourceList.Where(x => x.TaxRate == taxRate).Sum(x => x.PriceTotal) / (100 + taxRate) * taxRate;
+        return value;
+    }
+
+    public bool Debit
+    {
+        get
+        {
+            bool value = SourceList.Select(x => x.Debit).First();
+            return value;
+        }
+    }
+
     public List<BookingLine> SourceList { get; set; } = new();
+}
+
+public class BookingLineSummaryReportResult
+{
+    public DateTime Date { get; set; }
+    public decimal Amount { get; set; }
+    public decimal Price { get; set; }
+    public decimal Total { get; set; }
+    public string Description { get; set; }
+    public string ReferenceId { get; set; }
+    public int InvoicePosition { get; set; }
+    public string TaxLine { get; set; }
+    public bool Debit { get; set; }
 }

@@ -1,18 +1,10 @@
-﻿using FSH.WebApi.Application.Accounting.Bookings;
-using FSH.WebApi.Application.Accounting.Mandants;
-using FSH.WebApi.Application.ReportsContract;
+﻿using FSH.WebApi.Application.ReportsContract;
 using FSH.WebApi.Domain.Accounting;
 using FSH.WebApi.Domain.Common.Events;
 using FSH.WebApi.Domain.Hotel;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FSH.WebApi.Application.Accounting.Invoices;
-public class CreateInvoiceSoloRequest : IRequest<FileContentResult>
+public class CreateInvoiceSoloRequest : IRequest<string>
 {
     public int MandantId { get; set; }
     public int InvoiceIdMandant { get; set; }
@@ -53,7 +45,7 @@ public class CreateInvoiceSoloRequestValidator : CustomValidator<CreateInvoiceSo
     }
 }
 
-public class CreateInvoiceSoloRequestHandler : IRequestHandler<CreateInvoiceSoloRequest, FileContentResult>
+public class CreateInvoiceSoloRequestHandler : IRequestHandler<CreateInvoiceSoloRequest, string>
 {
     private readonly IReadRepository<Invoice> _invoiceRepository;
     private readonly IRepository<Invoice> _invoiceRepository1;
@@ -74,11 +66,8 @@ public class CreateInvoiceSoloRequestHandler : IRequestHandler<CreateInvoiceSolo
         _repositoryReservation = repositoryReservation;
     }
 
-    public async Task<FileContentResult> Handle(CreateInvoiceSoloRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(CreateInvoiceSoloRequest request, CancellationToken cancellationToken)
     {
-        //GetMandantNumberRequest mNumberRequest = new(request.MandantId, "Invoice");
-        //GetMandantNumberRequestHandler getMandantNumberRequestHandler = new(_mandantNumbersRepository);
-        //int invoiceNumberMandant = await getMandantNumberRequestHandler.Handle(mNumberRequest, cancellationToken);
         List<InvoiceDetail> invoiceDetails = new List<InvoiceDetail>();
 
         var invoice = new Invoice(
@@ -108,41 +97,12 @@ public class CreateInvoiceSoloRequestHandler : IRequestHandler<CreateInvoiceSolo
         invoice.DomainEvents.Add(EntityCreatedEvent.WithEntity(invoice));
         var invoiceSaved = await _invoiceRepository1.AddAsync(invoice, cancellationToken);
 
-        //foreach (BookingDto detail in request.InvoiceDetails)
-        //{
-        //    InvoiceDetail invoiceDetail = new InvoiceDetail(
-        //        invoiceSaved.Id,
-        //        invoiceSaved.InvoiceIdMandant,
-        //        invoiceSaved.MandantId,
-        //        detail.Id,
-        //        DateTime.Now,
-        //        detail.HotelDate,
-        //        detail.ReservationId,
-        //        detail.Name,
-        //        detail.Amount,
-        //        detail.Price,
-        //        detail.Debit,
-        //        detail.ItemId,
-        //        detail.ItemNumber,
-        //        detail.Source,
-        //        detail.BookingLineNumberId,
-        //        detail.TaxId,
-        //        detail.TaxRate,
-        //        detail.InvoicePos,
-        //        detail.State,
-        //        detail.ReferenceId);
-
-        //    // invoiceDetail.DomainEvents.Add(EntityCreatedEvent.WithEntity(invoiceDetail));
-        //    var invoiceDetailSaved = await _invoiceDetailRepository.AddAsync(invoiceDetail, cancellationToken);
-        //    invoiceDetails.Add(invoiceDetailSaved);
-        //}
-
         GetInvoiceReportRequest getInvoiceReportRequest = new();
-        //getInvoiceReportRequest.Invoice = invoice;
-        //getInvoiceReportRequest.InvoiceDetails = invoiceDetails;
-        GetInvoiceReportRequestHandler getInvoiceReportRequestHandler = new(_invoiceRepository, _invoiceDetailRepository, _reportService, _repositoryMandantDetail, _repositoryReservation);
-        var result = await getInvoiceReportRequestHandler.Handle(getInvoiceReportRequest, cancellationToken);
-       
+        GetInvoiceReportRequestHandler getInvoiceReportRequestHandler = new(_invoiceRepository, _invoiceDetailRepository);
+        var resultTemp = await getInvoiceReportRequestHandler.Handle(getInvoiceReportRequest, cancellationToken);
+
+        string result = $"{invoice.Id}-{invoice.InvoiceIdMandant}";
+
         return result;
     }
 }

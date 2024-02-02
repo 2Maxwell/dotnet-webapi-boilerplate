@@ -24,7 +24,10 @@ public class UpdatePackageRequest : IRequest<int>
     public bool ShopExtern { get; set; }
     public string? ChipIcon { get; set; }
     public string? ChipText { get; set; }
+    public int? DurationUnitEnumId { get; set; }
+    public int? Duration { get; set; }
     public List<PackageItemDto>? PackageItems { get; set; } = new();
+    public int? AppointmentTargetEnum { get; set; }
 }
 
 public class UpdatePackageRequestValidator : CustomValidator<UpdatePackageRequest>
@@ -94,7 +97,10 @@ public class UpdatePackageRequestHandler : IRequestHandler<UpdatePackageRequest,
             request.Optional,
             request.ShopExtern,
             request.ChipIcon,
-            request.ChipText);
+            request.ChipText,
+            request.DurationUnitEnumId,
+            request.Duration,
+            request.AppointmentTargetEnum);
 
 
         package.DomainEvents.Add(EntityUpdatedEvent.WithEntity(package));

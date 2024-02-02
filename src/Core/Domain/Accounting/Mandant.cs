@@ -16,7 +16,7 @@ public class Mandant : AuditableEntity<int>, IAggregateRoot
     [DataType(DataType.Date)]
     [Column(TypeName = "Date")]
     public DateTime HotelDate { get; set; }
-    public int TaxCountryId { get; set; }
+    // public int TaxCountryId { get; set; }
 
     public Mandant()
     {

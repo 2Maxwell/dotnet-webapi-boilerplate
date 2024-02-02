@@ -14,21 +14,16 @@ public class CreateRoomRequest : IRequest<int>
     public int BedsExtra { get; set; }
     public string? Facilities { get; set; }
     public string? PhoneNumber { get; set; }
-    public string NameUnique
-    {
-        get
-        {
-            return this.Name + "|" + this.MandantId;
-        }
-    }
-
-    public string PhoneNumberUnique
-    {
-        get
-        {
-            return this.PhoneNumber + "|" + this.MandantId;
-        }
-    }
+    public bool Clean { get; set; }
+    public bool Blocked { get; set; }
+    public DateTime? BlockedStart { get; set; }
+    public DateTime? BlockedEnd { get; set; }
+    public int CleaningState { get; set; }
+    public int DirtyDays { get; set; }
+    public int AssignedId { get; set; }
+    public int MinutesOccupied { get; set; }
+    public int MinutesDeparture { get; set; }
+    public int MinutesDefault { get; set; }
 
 }
 
@@ -39,21 +34,19 @@ public class CreateRoomRequestValidator : CustomValidator<CreateRoomRequest>
 
         RuleFor(x => x.Name)
         .NotEmpty()
-        .MaximumLength(50);
-
-        RuleFor(x => x.NameUnique)
-        .NotEmpty()
-        .MustAsync(async (nameUnique, ct) => await repository.GetBySpecAsync(new RoomByNameSpec(nameUnique), ct) is null)
-                .WithMessage((_, name) => string.Format(localizer["roomNameUnique.alreadyexists"], name));
+        .MaximumLength(50)
+        .MustAsync(async (room, name, ct) =>
+        await repository.GetBySpecAsync(new RoomByNameSpec(name, room.MandantId), ct)
+        is not Room existingRoom || existingRoom.MandantId == room.MandantId)
+        .WithMessage((_, name) => string.Format(localizer["roomName.alreadyexists"], name));
 
         RuleFor(x => x.PhoneNumber)
         .NotEmpty()
-        .MaximumLength(50);
-
-        RuleFor(x => x.PhoneNumberUnique)
-        .NotEmpty()
-        .MustAsync(async (phoneNumberUnique, ct) => await repository.GetBySpecAsync(new RoomByPhoneNumberSpec(phoneNumberUnique), ct) is null)
-        .WithMessage((_, phoneNumber) => string.Format(localizer["roomPhoneNumberUnique.alreadyexists"], phoneNumber));
+        .MaximumLength(50)
+                .MustAsync(async (room, phoneNumber, ct) =>
+        await repository.GetBySpecAsync(new RoomByNameSpec(phoneNumber, room.MandantId), ct)
+        is not Room existingRoom || existingRoom.MandantId == room.MandantId)
+        .WithMessage((_, phoneNumber) => string.Format(localizer["roomPhoneNumber.alreadyexists"], phoneNumber));
 
         RuleFor(x => x.CategoryId)
             .GreaterThan(0);
@@ -79,7 +72,8 @@ public class RoomByPhoneNumberSpec : Specification<Room>, ISingleResultSpecifica
 
 public class RoomByNameSpec : Specification<Room>, ISingleResultSpecification
 {
-    public RoomByNameSpec(string name) => Query.Where(x => x.Name == name);
+    public RoomByNameSpec(string name, int mandantId) =>
+        Query.Where(x => x.Name == name && (x.MandantId == mandantId || x.MandantId == 0));
 }
 
 public class CreateRoomRequestHandler : IRequestHandler<CreateRoomRequest, int>
@@ -90,7 +84,8 @@ public class CreateRoomRequestHandler : IRequestHandler<CreateRoomRequest, int>
 
     public async Task<int> Handle(CreateRoomRequest request, CancellationToken cancellationToken)
     {
-        var room = new Room(request.MandantId, request.CategoryId, request.Name, request.Description, request.DisplayDescription, request.Beds, request.BedsExtra, request.Facilities, request.PhoneNumber);
+        var room = new Room(request.MandantId, request.CategoryId, request.Name, request.Description, request.DisplayDescription, request.Beds, request.BedsExtra, request.Facilities, request.PhoneNumber, request.CleaningState, request.DirtyDays,
+            request.AssignedId, request.MinutesOccupied, request.MinutesDeparture, request.MinutesDefault);
 
         room.DomainEvents.Add(EntityCreatedEvent.WithEntity(room));
         await _repository.AddAsync(room, cancellationToken);
